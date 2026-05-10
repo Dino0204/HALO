@@ -22,8 +22,8 @@ const KEYFRAMES = [
   [0.0, 0, 80, 4, 0, 0, 4],
   [0.09, -10, 70, -20, -10, 0, -26],
   [0.18, 0, 78, 4, 0, 0, 4],
-  [0.27, -13, 45, 20, -13, 0, 32],
-  [0.36, -13, 3, 42, -13, 1.5, 32],
+  [0.27, -13, 70, 32, -13, 0, 32],
+  [0.36, -13, 70, 32, -13, 0, 32],
   [0.45, -13, 25, 18, -13, 0, 32],
   [0.54, -13, 1.8, 40, -13, 1.8, 28],
   [0.63, 0, 80, 4, 0, 0, 4],
@@ -35,6 +35,10 @@ const KEYFRAMES = [
 
 const _pos = new THREE.Vector3()
 const _tgt = new THREE.Vector3()
+const _viewDir = new THREE.Vector3()
+const WORLD_UP = new THREE.Vector3(0, 1, 0)
+const MAP_UP = new THREE.Vector3(0, 0, -1)
+const MAP_UP_SINGULARITY_THRESHOLD = 0.92
 
 function lerpKeyframes(t) {
   let i = 0
@@ -53,6 +57,12 @@ function lerpKeyframes(t) {
     THREE.MathUtils.lerp(ty0, ty1, s),
     THREE.MathUtils.lerp(tz0, tz1, s)
   )
+}
+
+function applyStableCameraUp(camera) {
+  _viewDir.subVectors(_tgt, _pos).normalize()
+  const mapUpIsSafe = Math.abs(_viewDir.dot(MAP_UP)) < MAP_UP_SINGULARITY_THRESHOLD
+  camera.up.copy(mapUpIsSafe ? MAP_UP : WORLD_UP)
 }
 
 export default function CameraRig() {
@@ -74,11 +84,12 @@ export default function CameraRig() {
 
     // Move camera
     lerpKeyframes(t)
+    applyStableCameraUp(camera)
     camera.position.copy(_pos)
     camera.lookAt(_tgt)
 
-    // Mouse offset in Gwangju close-up scenes (03–06)
-    if (t > 0.27 && t < 0.63) {
+    // Mouse offset only after the map-only Gwangju emphasis has finished.
+    if (t > 0.39 && t < 0.63) {
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       camera.rotation.y += mx * ((6 * Math.PI) / 180)

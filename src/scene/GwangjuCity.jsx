@@ -54,8 +54,8 @@ export default function GwangjuCity() {
     }
 
     const t = scroll.offset
-    // Visible when near Gwangju (scenes 03–09): t 0.27–0.90
-    meshRef.current.visible = t > 0.27 && t < 0.92
+    // Keep the map-only Gwangju emphasis clean before the city model appears.
+    meshRef.current.visible = t > 0.39 && t < 0.92
   })
 
   return (
