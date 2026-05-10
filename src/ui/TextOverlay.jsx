@@ -64,12 +64,16 @@ export default function TextOverlay() {
 
         if (index !== prevIndexRef.current) {
           prevIndexRef.current = index
-          // 이전 항목 숨기기
+          // 이전 항목 숨기기 — 진행 중인 tween 먼저 중단
           dateRefs.current.forEach((el, i) => {
-            if (el) el.style.opacity = i === index ? '' : '0'
+            if (!el) return
+            gsap.killTweensOf(el)
+            if (i !== index) gsap.set(el, { opacity: 0 })
           })
           testimonyRefs.current.forEach((el, i) => {
-            if (el) el.style.opacity = i === index ? '' : '0'
+            if (!el) return
+            gsap.killTweensOf(el)
+            if (i !== index) gsap.set(el, { opacity: 0 })
           })
           // 새 항목 등장 애니메이션
           if (dateRefs.current[index]) {
@@ -86,11 +90,19 @@ export default function TextOverlay() {
           }
         }
       } else {
-        // Scene 3 구간 밖이면 숨기기
+        // Scene 3 구간 밖이면 즉시 숨기기
         if (prevIndexRef.current !== -1) {
           prevIndexRef.current = -1
-          dateRefs.current.forEach(el => { if (el) el.style.opacity = '0' })
-          testimonyRefs.current.forEach(el => { if (el) el.style.opacity = '0' })
+          dateRefs.current.forEach(el => {
+            if (!el) return
+            gsap.killTweensOf(el)
+            gsap.set(el, { opacity: 0 })
+          })
+          testimonyRefs.current.forEach(el => {
+            if (!el) return
+            gsap.killTweensOf(el)
+            gsap.set(el, { opacity: 0 })
+          })
         }
       }
 

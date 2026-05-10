@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useMemo } from 'react'
 import { useScroll } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Effect } from 'postprocessing'
@@ -17,13 +17,13 @@ class FilmEffectImpl extends Effect {
 }
 
 export function FilmEffect() {
-  const effectRef = useRef(new FilmEffectImpl())
+  const effect = useMemo(() => new FilmEffectImpl(), [])
   const scroll = useScroll()
 
   useFrame(({ clock }) => {
-    effectRef.current.uniforms.get('uProgress').value = scroll.offset
-    effectRef.current.uniforms.get('uTime').value = clock.elapsedTime
+    effect.uniforms.get('uProgress').value = scroll.offset
+    effect.uniforms.get('uTime').value = clock.elapsedTime
   })
 
-  return <primitive object={effectRef.current} />
+  return <primitive object={effect} />
 }
