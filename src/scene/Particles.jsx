@@ -50,10 +50,7 @@ export default function Particles() {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial size={0.3} color="#888888" transparent opacity={0.6} sizeAttenuation />
     </points>
