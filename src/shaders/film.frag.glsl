@@ -1,36 +1,34 @@
 uniform float uProgress;
 uniform float uTime;
+uniform float uGrain;
+uniform float uVignette;
+uniform float uBW;
+uniform float uRedTint;
 
-float random(vec2 st) {
-  return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+float random(vec2 co) {
+  return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453 + uTime * 0.1);
 }
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
   vec3 color = inputColor.rgb;
 
-  float gray = dot(color, vec3(0.299, 0.587, 0.114));
-  vec3 bw = vec3(gray);
+  // B&W
+  float lum = dot(color, vec3(0.299, 0.587, 0.114));
+  color = mix(vec3(lum), color, 1.0 - uBW);
 
-  vec3 sepia = vec3(
-    dot(color, vec3(0.393, 0.769, 0.189)),
-    dot(color, vec3(0.349, 0.686, 0.168)),
-    dot(color, vec3(0.272, 0.534, 0.131))
-  );
+  // Red tint
+  if (uRedTint > 0.0) {
+    color = mix(color, vec3(color.r * 1.3, color.g * 0.7, color.b * 0.7), uRedTint);
+  }
 
-  // 0.0~0.5: 흑백, 0.5~0.75: 세피아, 0.75~1.0: 컬러
-  float colorMix = smoothstep(0.75, 1.0, uProgress);
-  float sepiaMix = smoothstep(0.5, 0.75, uProgress) * (1.0 - colorMix);
-  vec3 blended = mix(bw, sepia, sepiaMix);
-  blended = mix(blended, color, colorMix);
+  // Grain
+  float grain = (random(uv) - 0.5) * uGrain;
+  color += grain;
 
-  float grainIntensity = mix(0.12, 0.04, uProgress);
-  float grain = random(uv + fract(uTime * 0.1)) - 0.5;
-  blended += grain * grainIntensity;
+  // Vignette
+  vec2 vigUV = uv - 0.5;
+  float vig = 1.0 - dot(vigUV, vigUV) * uVignette * 4.0;
+  color *= clamp(vig, 0.0, 1.0);
 
-  float vignetteStrength = mix(0.5, 0.2, uProgress);
-  vec2 center = uv - 0.5;
-  float vignette = 1.0 - dot(center, center) * vignetteStrength * 4.0;
-  blended *= vignette;
-
-  outputColor = vec4(blended, inputColor.a);
+  outputColor = vec4(color, inputColor.a);
 }
