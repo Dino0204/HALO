@@ -7,6 +7,8 @@ import HUDTimeline from './ui/HUDTimeline'
 import HUDLocation from './ui/HUDLocation'
 import CustomScrollbar from './ui/CustomScrollbar'
 
+const SCROLL_PAGES = 28
+
 export default function App() {
   return (
     <>
@@ -15,7 +17,7 @@ export default function App() {
         gl={{ antialias: false }}
         camera={{ fov: 60, near: 0.1, far: 2000 }}
       >
-        <ScrollControls pages={14} damping={0.15}>
+        <ScrollControls pages={SCROLL_PAGES} damping={0.15}>
           <ScrollSync />
           <Experience />
         </ScrollControls>
