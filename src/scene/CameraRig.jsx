@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { useSceneStore } from '../store/sceneStore'
-import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import { GWANGJU_CITY_CENTER, GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
 const SCENE_RANGES = [
   [0.0, 0.09],
@@ -30,6 +30,7 @@ const OFFICE_POS = { x: jeonilBuilding.x - 4.5, z: jeonilBuilding.z + 9 }
 const OFFICE_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
 const MAP_CENTER = { x: 0, z: 4 }
 const GWANGJU_MAP_FALLBACK = { x: -13, z: 32 }
+const FINAL_CITY_VIEW = { x: GWANGJU_CITY_CENTER.x - 10, z: GWANGJU_CITY_CENTER.z + 4 }
 
 const _pos = new THREE.Vector3()
 const _tgt = new THREE.Vector3()
@@ -90,7 +91,8 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.72, gwangjuMapCenter.x, 8, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.81, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
     [0.9, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
-    [1.0, MAP_CENTER.x, 120, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
+    [0.94, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
+    [1.0, FINAL_CITY_VIEW.x, 220, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
   ]
 }
 

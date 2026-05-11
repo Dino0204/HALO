@@ -13,6 +13,7 @@ const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
 const DATA_ROOT = '/data/gwangju-buildings/'
 const CITY_VISIBLE_START = 0.42
 const CITY_VISIBLE_END = 0.92
+const FINAL_MAP_REVEAL_START = 0.9
 const LOAD_RADIUS = 70
 const BUILDING_COLORS = {
   civic: new THREE.Color('#8f8270'),
@@ -29,7 +30,11 @@ const LANDMARK_CLEAR_ZONES = [
 ]
 
 function isCitySceneVisible(t) {
-  return (t > CITY_VISIBLE_START && t < 0.63) || (t > 0.72 && t < CITY_VISIBLE_END)
+  return (
+    (t > CITY_VISIBLE_START && t < 0.63) ||
+    (t > 0.72 && t < CITY_VISIBLE_END) ||
+    t >= FINAL_MAP_REVEAL_START
+  )
 }
 
 function chunkIntersectsView(chunk, camera) {
@@ -154,10 +159,13 @@ export default function GwangjuCity() {
       return
     }
 
-    const nextActive = manifest.chunks
-      .filter((chunk) => chunkIntersectsView(chunk, camera))
-      .map((chunk) => chunk.key)
-      .sort()
+    const nextActive =
+      t >= FINAL_MAP_REVEAL_START
+        ? manifest.chunks.map((chunk) => chunk.key).sort()
+        : manifest.chunks
+            .filter((chunk) => chunkIntersectsView(chunk, camera))
+            .map((chunk) => chunk.key)
+            .sort()
     const signature = nextActive.join('|')
     if (signature === activeKeySignature.current) return
 
