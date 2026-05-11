@@ -5,6 +5,7 @@ import ScrollSync from './scene/ScrollSync'
 import TextOverlay from './ui/TextOverlay'
 import HUDTimeline from './ui/HUDTimeline'
 import HUDLocation from './ui/HUDLocation'
+import CustomScrollbar from './ui/CustomScrollbar'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <TextOverlay />
       <HUDTimeline />
       <HUDLocation />
+      <CustomScrollbar />
     </>
   )
 }
