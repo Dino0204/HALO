@@ -25,10 +25,10 @@ const SCENE_CONTENT = [
   // Scene 03
   {
     center: '그 중심에 광주가 있었다.',
-    bottom: '5월 18일 오전\n전남대학교 정문 앞',
   },
   // Scene 04
   {
+    center: '5월 18일 오전\n전남대학교 정문 앞',
     topLeft: '1980.05.18',
     topLeftColor: '#ff6666',
     bottom: '계엄군이 학생들을 진압봉으로 가격했다.\n지나가던 시민도 진압 대상이 됐다.',
