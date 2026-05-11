@@ -4,6 +4,8 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
+const FINAL_MAP_REVEAL_START = 0.9
+
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
 
@@ -87,8 +89,9 @@ export default function GwangjuLandmarks() {
 
   useFrame(() => {
     const t = scroll.offset
-    const cnuVisible = t > 0.42 && t < 0.535
-    const downtownVisible = (t >= 0.54 && t < 0.63) || (t > 0.72 && t < 0.92)
+    const cnuVisible = (t > 0.4 && t < 0.535) || t >= FINAL_MAP_REVEAL_START
+    const downtownVisible =
+      (t >= 0.54 && t < 0.63) || (t > 0.72 && t < 0.92) || t >= FINAL_MAP_REVEAL_START
 
     if (cnuRef.current) cnuRef.current.visible = cnuVisible
     if (downtownRef.current) downtownRef.current.visible = downtownVisible

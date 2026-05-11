@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import { cityVisualPoint } from '../utils/gwangjuCityScale'
 
 const GEO_URL = '/data/provinces-geo-simple.json'
+const CITY_TRANSITION_START = 0.36
+const FINAL_MAP_REVEAL_START = 0.9
 
 const CITIES = [
   { name: '서울', x: -10, z: -26 },
@@ -40,18 +43,23 @@ function CityDot({ x, z, color, scale = 1 }) {
   )
 }
 
-function lngLatToMapPoint([lng, lat]) {
-  return new THREE.Vector3((lng - 127.5) * 20, 0.32, -(lat - 36.5) * 24)
+function lngLatToMapPoint([lng, lat], useCityScale = false) {
+  const x = (lng - 127.5) * 20
+  const z = -(lat - 36.5) * 24
+  if (!useCityScale) return new THREE.Vector3(x, 0.32, z)
+
+  const point = cityVisualPoint(x, z)
+  return new THREE.Vector3(point.x, 2.0, point.z)
 }
 
-function buildBoundaryGeometries(feature) {
+function buildBoundaryGeometries(feature, useCityScale = false) {
   const polygons =
     feature.geometry.type === 'Polygon'
       ? [feature.geometry.coordinates]
       : feature.geometry.coordinates
   return polygons.map((polygon) => {
     const outer = polygon[0]
-    const points = outer.map(lngLatToMapPoint)
+    const points = outer.map((coordinate) => lngLatToMapPoint(coordinate, useCityScale))
     if (points.length > 0) points.push(points[0].clone())
     return new THREE.BufferGeometry().setFromPoints(points)
   })
@@ -59,7 +67,8 @@ function buildBoundaryGeometries(feature) {
 
 function GwangjuBoundary() {
   const scroll = useScroll()
-  const ref = useRef()
+  const mapRef = useRef()
+  const cityRef = useRef()
   const [feature, setFeature] = useState(null)
 
   useEffect(() => {
@@ -80,28 +89,58 @@ function GwangjuBoundary() {
       .catch(console.error)
   }, [])
 
-  const geometries = useMemo(() => {
+  const mapGeometries = useMemo(() => {
     if (!feature) return []
-    return buildBoundaryGeometries(feature)
+    return buildBoundaryGeometries(feature, false)
+  }, [feature])
+
+  const cityGeometries = useMemo(() => {
+    if (!feature) return []
+    return buildBoundaryGeometries(feature, true)
   }, [feature])
 
   useFrame(({ clock }) => {
-    if (!ref.current) return
     const t = scroll.offset
-    ref.current.visible = t >= 0.27 && t < 0.42
-    ref.current.children.forEach((line) => {
-      line.material.opacity = 0.82 + Math.sin(clock.elapsedTime * 3) * 0.12
-    })
+    const opacity = 0.82 + Math.sin(clock.elapsedTime * 3) * 0.12
+
+    if (mapRef.current) {
+      mapRef.current.visible = t >= 0.27 && t < CITY_TRANSITION_START
+      mapRef.current.children.forEach((line) => {
+        line.material.opacity = opacity
+      })
+    }
+
+    if (cityRef.current) {
+      cityRef.current.visible = t >= FINAL_MAP_REVEAL_START
+      cityRef.current.children.forEach((line) => {
+        line.material.opacity = opacity
+      })
+    }
   })
 
   return (
-    <group ref={ref} visible={false}>
-      {geometries.map((geometry, i) => (
-        <line key={i} geometry={geometry}>
-          <lineBasicMaterial color="#ffffff" transparent opacity={0.9} depthWrite={false} />
-        </line>
-      ))}
-    </group>
+    <>
+      <group ref={mapRef} visible={false}>
+        {mapGeometries.map((geometry, i) => (
+          <line key={i} geometry={geometry}>
+            <lineBasicMaterial color="#ffffff" transparent opacity={0.9} depthWrite={false} />
+          </line>
+        ))}
+      </group>
+      <group ref={cityRef} visible={false}>
+        {cityGeometries.map((geometry, i) => (
+          <line key={i} geometry={geometry}>
+            <lineBasicMaterial
+              color="#f2d58a"
+              transparent
+              opacity={0.9}
+              depthTest={false}
+              depthWrite={false}
+            />
+          </line>
+        ))}
+      </group>
+    </>
   )
 }
 

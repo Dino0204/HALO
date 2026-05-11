@@ -13,7 +13,7 @@ const SCENE_CONTENT = [
   {
     topLeft: '1979.12.12',
     topLeftColor: '#ff6666',
-    center: '전두환, 군사 반란을 일으키다',
+    center: '전두환, 군사 반란을 일으키다.',
     bottom: '군부가 서울을 장악했다.\n국회는 봉쇄되고, 민주주의는 멈췄다.',
   },
   // Scene 02

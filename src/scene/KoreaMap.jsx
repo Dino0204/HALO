@@ -4,6 +4,7 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
 const GEO_URL = '/data/provinces-geo-simple.json'
+const CITY_TRANSITION_START = 0.36
 
 function buildShapesFromGeoJson(geoJson) {
   const shapes = []
@@ -63,7 +64,7 @@ export default function KoreaMap() {
   useFrame(() => {
     if (!groupRef.current) return
     const t = scroll.offset
-    groupRef.current.visible = t < 0.42 || (t >= 0.63 && t < 0.72)
+    groupRef.current.visible = t < CITY_TRANSITION_START || (t >= 0.63 && t < 0.72)
   })
 
   if (!geometry) return null
