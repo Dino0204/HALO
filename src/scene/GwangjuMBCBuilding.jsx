@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll, useGLTF } from '@react-three/drei'
 import { MBC_POS } from './landmarkPositions'
 
-const MBC_MODEL_SCALE = 0.4
+const MBC_MODEL_SCALE = 0.25
 const SCROLL_START = 0.4286
 const SCROLL_END = 0.5
 
@@ -36,51 +36,6 @@ function FireFlicker() {
       decay={1.5}
       position={[MBC_POS.x, MBC_POS.y + 2, MBC_POS.z + 2]}
     />
-  )
-}
-
-function Smoke() {
-  const ref = useRef()
-  const scroll = useScroll()
-  const COUNT = 1500
-  const { base, positions } = useMemo(() => {
-    const arr = new Float32Array(COUNT * 3)
-    const rng = seededRandom(7331)
-    for (let i = 0; i < COUNT; i++) {
-      arr[i * 3] = MBC_POS.x + (rng() - 0.5) * 6
-      arr[i * 3 + 1] = MBC_POS.y + rng() * 12
-      arr[i * 3 + 2] = MBC_POS.z + (rng() - 0.5) * 6
-    }
-    return { base: arr, positions: arr.slice() }
-  }, [])
-
-  useFrame(({ clock }) => {
-    if (!ref.current) return
-    const visible = scroll.offset >= SCROLL_START && scroll.offset < SCROLL_END
-    ref.current.visible = visible
-    if (!visible) return
-    const pos = ref.current.geometry.attributes.position.array
-    const speed = clock.elapsedTime * 3.0
-    for (let i = 0; i < COUNT; i++) {
-      pos[i * 3 + 1] = (base[i * 3 + 1] + speed) % 16
-    }
-    ref.current.geometry.attributes.position.needsUpdate = true
-  })
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.18}
-        color="#332211"
-        transparent
-        opacity={0.7}
-        sizeAttenuation
-        depthWrite={false}
-      />
-    </points>
   )
 }
 
@@ -126,7 +81,6 @@ export default function GwangjuMBCBuilding() {
         scale={MBC_MODEL_SCALE}
       />
       <FireFlicker />
-      <Smoke />
       <Crowd />
     </group>
   )
