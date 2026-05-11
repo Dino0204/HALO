@@ -29,12 +29,7 @@ export function cityVisualPoint(x, z) {
 export function cityVisualBbox([minX, minZ, maxX, maxZ]) {
   const a = cityVisualPoint(minX, minZ)
   const b = cityVisualPoint(maxX, maxZ)
-  return [
-    Math.min(a.x, b.x),
-    Math.min(a.z, b.z),
-    Math.max(a.x, b.x),
-    Math.max(a.z, b.z),
-  ]
+  return [Math.min(a.x, b.x), Math.min(a.z, b.z), Math.max(a.x, b.x), Math.max(a.z, b.z)]
 }
 
 export const GWANGJU_LANDMARKS = {

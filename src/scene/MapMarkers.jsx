@@ -45,7 +45,10 @@ function lngLatToMapPoint([lng, lat]) {
 }
 
 function buildBoundaryGeometries(feature) {
-  const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates
+  const polygons =
+    feature.geometry.type === 'Polygon'
+      ? [feature.geometry.coordinates]
+      : feature.geometry.coordinates
   return polygons.map((polygon) => {
     const outer = polygon[0]
     const points = outer.map(lngLatToMapPoint)

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useScroll } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Effect } from 'postprocessing'
@@ -52,7 +52,7 @@ class FilmEffectImpl extends Effect {
 export function FilmEffect() {
   const effect = useMemo(() => new FilmEffectImpl(), [])
   const scroll = useScroll()
-  const prevParams = useMemo(() => ({ grain: 0.1, vignette: 0.3, bw: 1.0, red: 0.0 }), [])
+  const prevParams = useRef({ grain: 0.1, vignette: 0.3, bw: 1.0, red: 0.0 })
 
   useFrame(({ clock }) => {
     const t = scroll.offset
@@ -65,15 +65,15 @@ export function FilmEffect() {
 
     const [grain, vig, bw, red] = SCENE_PARAMS[sceneIdx]
     // Smooth transitions
-    prevParams.grain += (grain - prevParams.grain) * 0.05
-    prevParams.vignette += (vig - prevParams.vignette) * 0.05
-    prevParams.bw += (bw - prevParams.bw) * 0.05
-    prevParams.red += (red - prevParams.red) * 0.05
+    prevParams.current.grain += (grain - prevParams.current.grain) * 0.05
+    prevParams.current.vignette += (vig - prevParams.current.vignette) * 0.05
+    prevParams.current.bw += (bw - prevParams.current.bw) * 0.05
+    prevParams.current.red += (red - prevParams.current.red) * 0.05
 
-    effect.uniforms.get('uGrain').value = prevParams.grain
-    effect.uniforms.get('uVignette').value = prevParams.vignette
-    effect.uniforms.get('uBW').value = prevParams.bw
-    effect.uniforms.get('uRedTint').value = prevParams.red
+    effect.uniforms.get('uGrain').value = prevParams.current.grain
+    effect.uniforms.get('uVignette').value = prevParams.current.vignette
+    effect.uniforms.get('uBW').value = prevParams.current.bw
+    effect.uniforms.get('uRedTint').value = prevParams.current.red
   })
 
   return <primitive object={effect} />

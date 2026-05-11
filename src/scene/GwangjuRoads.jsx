@@ -101,7 +101,9 @@ export default function GwangjuRoads() {
       }
     })
 
-    return Object.fromEntries(Object.entries(groups).map(([key, features]) => [key, createGeometry(features, key)]))
+    return Object.fromEntries(
+      Object.entries(groups).map(([key, features]) => [key, createGeometry(features, key)])
+    )
   }, [roads])
 
   useEffect(() => {

@@ -38,7 +38,11 @@ export default function ProvincialOffice() {
       {Array.from({ length: 12 }).map((_, i) => (
         <mesh
           key={i}
-          position={[OFFICE_POS.x - 3.6 + (i % 6) * 1.45, 1.5 + Math.floor(i / 6) * 1.25, OFFICE_POS.z - 3.05]}
+          position={[
+            OFFICE_POS.x - 3.6 + (i % 6) * 1.45,
+            1.5 + Math.floor(i / 6) * 1.25,
+            OFFICE_POS.z - 3.05,
+          ]}
         >
           <planeGeometry args={[0.65, 0.65]} />
           <meshBasicMaterial color="#ffffff" opacity={0.3} transparent />

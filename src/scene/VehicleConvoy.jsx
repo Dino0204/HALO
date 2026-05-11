@@ -24,7 +24,10 @@ function toVisualPoint([x, z]) {
 function pathLength(points) {
   let length = 0
   for (let index = 1; index < points.length; index += 1) {
-    length += Math.hypot(points[index].x - points[index - 1].x, points[index].z - points[index - 1].z)
+    length += Math.hypot(
+      points[index].x - points[index - 1].x,
+      points[index].z - points[index - 1].z
+    )
   }
   return length
 }
@@ -108,13 +111,19 @@ function connectRoadSegments(features) {
 
 function createGeumnamroPath(roads) {
   const geumnamroFeatures = roads.features.filter((feature) => feature.properties.name === '금남로')
-  const majorFeatures = geumnamroFeatures.filter((feature) => feature.properties.roadClass === 'major')
+  const majorFeatures = geumnamroFeatures.filter(
+    (feature) => feature.properties.roadClass === 'major'
+  )
 
-  const connected = connectRoadSegments(majorFeatures.length > 0 ? majorFeatures : geumnamroFeatures)
+  const connected = connectRoadSegments(
+    majorFeatures.length > 0 ? majorFeatures : geumnamroFeatures
+  )
   if (connected.length > 0) return connected
 
   const fallback = geumnamroFeatures.sort(
-    (a, b) => pathLength(b.geometry.coordinates.map(toVisualPoint)) - pathLength(a.geometry.coordinates.map(toVisualPoint)),
+    (a, b) =>
+      pathLength(b.geometry.coordinates.map(toVisualPoint)) -
+      pathLength(a.geometry.coordinates.map(toVisualPoint))
   )[0]
   return fallback ? fallback.geometry.coordinates.map(toVisualPoint) : []
 }
@@ -150,13 +159,13 @@ export default function VehicleConvoy() {
     for (let i = 0; i < TAXIS; i++) {
       const lane = (i % 3) * 0.13 - 0.13 + VARIATION[i % VARIATION.length] * 0.05
       const offset = (i + VARIATION[(i + 2) % VARIATION.length] * 0.45) * spacing
-      const scale = 0.86 + ((i % 4) * 0.05)
+      const scale = 0.86 + (i % 4) * 0.05
       v.push({ type: 'taxi', lane, offset, scale })
     }
     for (let i = 0; i < BUSES; i++) {
       const lane = (i % 2) * 0.28 - 0.14 + VARIATION[(i + 5) % VARIATION.length] * 0.04
       const offset = (i * 4.1 + 1.8 + VARIATION[(i + 7) % VARIATION.length] * 0.55) * spacing
-      const scale = 0.94 + ((i % 3) * 0.04)
+      const scale = 0.94 + (i % 3) * 0.04
       v.push({ type: 'bus', lane, offset, scale })
     }
     return v
@@ -165,7 +174,8 @@ export default function VehicleConvoy() {
   useFrame(() => {
     if (!groupRef.current) return
     const t = scroll.offset
-    groupRef.current.visible = t > VEHICLE_VISIBLE_START && t < VEHICLE_VISIBLE_END && roadDistance > 0
+    groupRef.current.visible =
+      t > VEHICLE_VISIBLE_START && t < VEHICLE_VISIBLE_END && roadDistance > 0
     if (!groupRef.current.visible) return
 
     const children = groupRef.current.children
@@ -186,11 +196,7 @@ export default function VehicleConvoy() {
     <group ref={groupRef}>
       {vehicles.map((v, i) => (
         <mesh key={i} scale={v.scale}>
-          {v.type === 'taxi' ? (
-            <boxGeometry args={TAXI_SIZE} />
-          ) : (
-            <boxGeometry args={BUS_SIZE} />
-          )}
+          {v.type === 'taxi' ? <boxGeometry args={TAXI_SIZE} /> : <boxGeometry args={BUS_SIZE} />}
           <meshStandardMaterial color={v.type === 'taxi' ? '#e8c020' : '#2060a0'} />
         </mesh>
       ))}

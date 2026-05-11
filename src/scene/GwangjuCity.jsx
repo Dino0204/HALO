@@ -106,7 +106,12 @@ function BuildingChunk({ chunk, name }) {
   }, [instances])
 
   return (
-    <instancedMesh name={name} ref={meshRef} args={[null, null, instances.length]} frustumCulled={false}>
+    <instancedMesh
+      name={name}
+      ref={meshRef}
+      args={[null, null, instances.length]}
+      frustumCulled={false}
+    >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial vertexColors roughness={0.78} metalness={0.04} />
     </instancedMesh>

@@ -34,18 +34,7 @@ export default function GwangjuBlockade() {
       .catch(console.error)
   }, [])
 
-  const material = useMemo(
-    () =>
-      new THREE.ShaderMaterial({
-        vertexShader: stripeVertexShader,
-        fragmentShader: stripeFragmentShader,
-        uniforms: { uOpacity: { value: 0 } },
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-      }),
-    []
-  )
+  const materialRef = useRef()
 
   const geometry = useMemo(() => {
     if (!geoJson) return null
@@ -87,9 +76,9 @@ export default function GwangjuBlockade() {
     if (visible) {
       const fadeIn = THREE.MathUtils.smoothstep(t, 0.63, 0.67)
       const fadeOut = 1 - THREE.MathUtils.smoothstep(t, 0.69, 0.72)
-      material.uniforms.uOpacity.value = fadeIn * fadeOut
+      materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut
     } else {
-      material.uniforms.uOpacity.value = 0
+      materialRef.current.uniforms.uOpacity.value = 0
     }
   })
 
@@ -97,7 +86,15 @@ export default function GwangjuBlockade() {
 
   return (
     <mesh ref={meshRef} geometry={geometry} position={[0, 0.5, 0]}>
-      <primitive object={material} attach="material" />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={stripeVertexShader}
+        fragmentShader={stripeFragmentShader}
+        uniforms={{ uOpacity: { value: 0 } }}
+        transparent
+        depthWrite={false}
+        side={THREE.DoubleSide}
+      />
     </mesh>
   )
 }

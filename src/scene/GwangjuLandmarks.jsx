@@ -52,7 +52,7 @@ function JeonilBuilding() {
             <boxGeometry args={[0.34, 0.16, 0.04]} />
             <meshStandardMaterial color="#222522" roughness={0.35} />
           </mesh>
-        )),
+        ))
       )}
     </group>
   )
@@ -69,7 +69,12 @@ function GeumnamroMarker() {
     <group position={[midX, 0.11, midZ]} rotation={[0, angle, 0]}>
       <mesh>
         <boxGeometry args={[0.36, 0.05, 8.4]} />
-        <meshStandardMaterial color="#f0d36d" emissive="#5f4611" emissiveIntensity={0.24} roughness={0.6} />
+        <meshStandardMaterial
+          color="#f0d36d"
+          emissive="#5f4611"
+          emissiveIntensity={0.24}
+          roughness={0.6}
+        />
       </mesh>
     </group>
   )
