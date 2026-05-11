@@ -1,9 +1,14 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
+import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
 const TAXIS = 18
 const BUSES = 6
+const ROAD_CENTER = {
+  x: (GWANGJU_LANDMARKS.geumnamroPark.x + GWANGJU_LANDMARKS.jeonilBuilding.x) / 2,
+  z: (GWANGJU_LANDMARKS.geumnamroPark.z + GWANGJU_LANDMARKS.jeonilBuilding.z) / 2,
+}
 
 export default function VehicleConvoy() {
   const groupRef = useRef()
@@ -31,7 +36,7 @@ export default function VehicleConvoy() {
     const speed = clock.elapsedTime * 2
     vehicles.forEach((v, i) => {
       if (!children[i]) return
-      const z = ((v.zOffset - speed) % 50) + 10
+      const z = ROAD_CENTER.z + ((v.zOffset - speed) % 50) + 10
       children[i].position.z = z
     })
   })
@@ -39,7 +44,10 @@ export default function VehicleConvoy() {
   return (
     <group ref={groupRef}>
       {vehicles.map((v, i) => (
-        <mesh key={i} position={[-13 + v.lane, v.type === 'bus' ? 0.5 : 0.3, v.zOffset]}>
+        <mesh
+          key={i}
+          position={[ROAD_CENTER.x + v.lane, v.type === 'bus' ? 0.5 : 0.3, ROAD_CENTER.z + v.zOffset]}
+        >
           {v.type === 'taxi' ? (
             <boxGeometry args={[1.2, 0.6, 2.4]} />
           ) : (

@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { useSceneStore } from '../store/sceneStore'
+import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
 const SCENE_RANGES = [
   [0.0, 0.09],
@@ -18,17 +19,26 @@ const SCENE_RANGES = [
   [0.9, 1.0],
 ]
 
+const { cnuGate, geumnamroPark, jeonilBuilding } = GWANGJU_LANDMARKS
+
+const CNU_POS = { x: cnuGate.x - 2.2, z: cnuGate.z + 7.5 }
+const CNU_TGT = { x: cnuGate.x, z: cnuGate.z }
+const GEUMNAMRO_POS = { x: geumnamroPark.x - 3.2, z: geumnamroPark.z + 8.5 }
+const GEUMNAMRO_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
+const OFFICE_POS = { x: jeonilBuilding.x - 4.5, z: jeonilBuilding.z + 9 }
+const OFFICE_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
+
 const KEYFRAMES = [
   [0.0, 0, 80, 4, 0, 0, 4],
   [0.09, -10, 70, -20, -10, 0, -26],
   [0.18, 0, 78, 4, 0, 0, 4],
-  [0.27, -13, 70, 32, -13, 0, 32],
-  [0.36, -13, 70, 32, -13, 0, 32],
-  [0.45, -13, 25, 18, -13, 0, 32],
-  [0.54, -13, 1.8, 40, -13, 1.8, 28],
+  [0.27, -13, 35, 32, -13, 0, 32],
+  [0.36, -13, 35, 32, -13, 0, 32],
+  [0.45, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
+  [0.54, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
   [0.63, 0, 80, 4, 0, 0, 4],
-  [0.72, -3, 8, 52, -13, 2, 32],
-  [0.81, -13, 8, 50, -13, 2, 35],
+  [0.72, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
+  [0.81, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
   [0.9, 0, 45, 4, 0, 0, 4],
   [1.0, 0, 120, 4, 0, 0, 4],
 ]

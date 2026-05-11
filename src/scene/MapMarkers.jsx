@@ -85,7 +85,7 @@ function GwangjuBoundary() {
   useFrame(({ clock }) => {
     if (!ref.current) return
     const t = scroll.offset
-    ref.current.visible = t >= 0.27 && t < 0.36
+    ref.current.visible = t >= 0.27 && t < 0.42
     ref.current.children.forEach((line) => {
       line.material.opacity = 0.82 + Math.sin(clock.elapsedTime * 3) * 0.12
     })

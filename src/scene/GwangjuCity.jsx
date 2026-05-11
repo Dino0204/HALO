@@ -1,67 +1,143 @@
-import { useRef, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import {
+  CITY_HEIGHT_SCALE,
+  MIN_BUILDING_SIZE,
+  cityVisualBbox,
+} from '../utils/gwangjuCityScale'
 
-function mulberry32(seed) {
-  return function () {
-    seed |= 0
-    seed = (seed + 0x6d2b79f5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
+const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
+const DATA_ROOT = '/data/gwangju-buildings/'
+const CITY_VISIBLE_START = 0.42
+const CITY_VISIBLE_END = 0.92
+const LOAD_RADIUS = 70
+
+function isCitySceneVisible(t) {
+  return (t > CITY_VISIBLE_START && t < 0.63) || (t > 0.72 && t < CITY_VISIBLE_END)
 }
 
-const GRID_W = 20
-const GRID_D = 25
-const SPACING = 1.5
-const COUNT = GRID_W * GRID_D
-const CENTER_X = -13
-const CENTER_Z = 32
+function chunkIntersectsView(chunk, camera) {
+  const [minX, minZ, maxX, maxZ] = cityVisualBbox(chunk.bbox)
+  const x = camera.position.x
+  const z = camera.position.z
+  const nearestX = THREE.MathUtils.clamp(x, minX, maxX)
+  const nearestZ = THREE.MathUtils.clamp(z, minZ, maxZ)
+  return Math.hypot(x - nearestX, z - nearestZ) < LOAD_RADIUS
+}
 
-export default function GwangjuCity() {
+function BuildingChunk({ chunk, name }) {
   const meshRef = useRef()
-  const scroll = useScroll()
 
   const matrices = useMemo(() => {
-    const rand = mulberry32(518)
     const dummy = new THREE.Object3D()
-    const mats = []
+    return chunk.features.map((feature) => {
+      const [minX, minZ, maxX, maxZ] = cityVisualBbox(feature.properties.bbox)
+      const height = feature.properties.height * CITY_HEIGHT_SCALE
+      const width = Math.max(MIN_BUILDING_SIZE, maxX - minX)
+      const depth = Math.max(MIN_BUILDING_SIZE, maxZ - minZ)
+      dummy.position.set((minX + maxX) / 2, height / 2, (minZ + maxZ) / 2)
+      dummy.scale.set(width, height, depth)
+      dummy.updateMatrix()
+      return dummy.matrix.clone()
+    })
+  }, [chunk])
 
-    for (let i = 0; i < GRID_W; i++) {
-      for (let j = 0; j < GRID_D; j++) {
-        const r = rand()
-        const height = 0.3 + r * 3
-        const x = CENTER_X + (i - GRID_W / 2) * SPACING + (rand() - 0.5) * 0.5
-        const z = CENTER_Z + (j - GRID_D / 2) * SPACING + (rand() - 0.5) * 0.5
-        dummy.position.set(x, height / 2, z)
-        dummy.scale.set(0.8 + rand() * 0.8, height, 0.8 + rand() * 0.8)
-        dummy.updateMatrix()
-        mats.push(dummy.matrix.clone())
-      }
-    }
-    return mats
+  useEffect(() => {
+    if (!meshRef.current) return
+    matrices.forEach((matrix, index) => meshRef.current.setMatrixAt(index, matrix))
+    meshRef.current.instanceMatrix.needsUpdate = true
+  }, [matrices])
+
+  return (
+    <instancedMesh name={name} ref={meshRef} args={[null, null, matrices.length]} frustumCulled={false}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="#666666" />
+    </instancedMesh>
+  )
+}
+
+export default function GwangjuCity() {
+  const groupRef = useRef()
+  const scroll = useScroll()
+  const { camera } = useThree()
+  const [manifest, setManifest] = useState(null)
+  const [loadedChunks, setLoadedChunks] = useState({})
+  const [activeKeys, setActiveKeys] = useState([])
+  const loadingKeys = useRef(new Set())
+  const activeKeySignature = useRef('')
+
+  useEffect(() => {
+    fetch(MANIFEST_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load Gwangju building manifest: ${response.status}`)
+        }
+        return response.json()
+      })
+      .then(setManifest)
+      .catch(console.error)
   }, [])
 
-  const meshReady = useRef(false)
   useFrame(() => {
-    if (!meshRef.current) return
-    if (!meshReady.current) {
-      matrices.forEach((m, i) => meshRef.current.setMatrixAt(i, m))
-      meshRef.current.instanceMatrix.needsUpdate = true
-      meshReady.current = true
-    }
+    if (!groupRef.current) return
 
     const t = scroll.offset
-    // Keep the map-only Gwangju emphasis clean before the city model appears.
-    meshRef.current.visible = t > 0.39 && t < 0.92
+    const visible = isCitySceneVisible(t)
+    groupRef.current.visible = visible
+    if (!visible || !manifest) {
+      if (activeKeySignature.current !== '') {
+        activeKeySignature.current = ''
+        setActiveKeys([])
+      }
+      return
+    }
+
+    const nextActive = manifest.chunks
+      .filter((chunk) => chunkIntersectsView(chunk, camera))
+      .map((chunk) => chunk.key)
+      .sort()
+    const signature = nextActive.join('|')
+    if (signature === activeKeySignature.current) return
+
+    activeKeySignature.current = signature
+    setActiveKeys(nextActive)
+
+    nextActive.forEach((key) => {
+      if (loadedChunks[key] || loadingKeys.current.has(key)) return
+
+      const chunkInfo = manifest.chunks.find((chunk) => chunk.key === key)
+      if (!chunkInfo) return
+
+      loadingKeys.current.add(key)
+      fetch(`${DATA_ROOT}${chunkInfo.file}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to load Gwangju building chunk ${key}: ${response.status}`)
+          }
+          return response.json()
+        })
+        .then((geoJson) => {
+          setLoadedChunks((current) => ({
+            ...current,
+            [key]: geoJson,
+          }))
+        })
+        .catch(console.error)
+        .finally(() => {
+          loadingKeys.current.delete(key)
+        })
+    })
   })
 
   return (
-    <instancedMesh ref={meshRef} args={[null, null, COUNT]} frustumCulled={false}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#1a1a1a" />
-    </instancedMesh>
+    <group ref={groupRef} visible={false}>
+      {activeKeys.map((key) => {
+        const chunk = loadedChunks[key]
+        if (!chunk) return null
+        return <BuildingChunk key={key} chunk={chunk} name={chunk.name} />
+      })}
+    </group>
   )
 }

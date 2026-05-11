@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 
 const GEO_URL = '/data/provinces-geo-simple.json'
@@ -34,6 +36,8 @@ function buildShapesFromGeoJson(geoJson) {
 export default function KoreaMap() {
   const [geoJson, setGeoJson] = useState(null)
   const meshRef = useRef(null)
+  const groupRef = useRef(null)
+  const scroll = useScroll()
 
   useEffect(() => {
     fetch(GEO_URL)
@@ -56,10 +60,16 @@ export default function KoreaMap() {
     return geo
   }, [geoJson])
 
+  useFrame(() => {
+    if (!groupRef.current) return
+    const t = scroll.offset
+    groupRef.current.visible = t < 0.42 || (t >= 0.63 && t < 0.72)
+  })
+
   if (!geometry) return null
 
   return (
-    <group>
+    <group ref={groupRef}>
       <mesh ref={meshRef} geometry={geometry}>
         <meshStandardMaterial color="#2a2a2a" side={THREE.DoubleSide} />
       </mesh>
