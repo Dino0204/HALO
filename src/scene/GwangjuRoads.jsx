@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { GWANGJU_LANDMARKS, cityVisualBbox } from '../utils/gwangjuCityScale'
 
 const ROADS_URL = '/data/gwangju-roads/roads.json'
-const CITY_VISIBLE_START = 0.42
+const CITY_VISIBLE_START = 0.36
 const CITY_VISIBLE_END = 0.92
 const FINAL_MAP_REVEAL_START = 0.9
 const ROAD_Y = {

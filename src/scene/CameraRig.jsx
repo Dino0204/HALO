@@ -83,7 +83,6 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.18, MAP_CENTER.x, 78, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
     [0.27, gwangjuMapCenter.x, 54, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.36, gwangjuMapCenter.x, 24, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.42, gwangjuMapCenter.x, 18, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.45, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
     [0.54, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
     [0.63, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],

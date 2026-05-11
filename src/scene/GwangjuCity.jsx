@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -11,8 +11,9 @@ import {
 
 const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
 const DATA_ROOT = '/data/gwangju-buildings/'
-const CITY_VISIBLE_START = 0.42
+const CITY_VISIBLE_START = 0.36
 const CITY_VISIBLE_END = 0.92
+const CITY_PRELOAD_START = 0.27
 const FINAL_MAP_REVEAL_START = 0.9
 const LOAD_RADIUS = 70
 const BUILDING_COLORS = {
@@ -130,8 +131,10 @@ export default function GwangjuCity() {
   const [manifest, setManifest] = useState(null)
   const [loadedChunks, setLoadedChunks] = useState({})
   const [activeKeys, setActiveKeys] = useState([])
+  const loadedChunksRef = useRef({})
   const loadingKeys = useRef(new Set())
   const activeKeySignature = useRef('')
+  const preloadStarted = useRef(false)
 
   useEffect(() => {
     fetch(MANIFEST_URL)
@@ -145,17 +148,70 @@ export default function GwangjuCity() {
       .catch(console.error)
   }, [])
 
+  useEffect(() => {
+    loadedChunksRef.current = loadedChunks
+  }, [loadedChunks])
+
+  const loadChunkKeys = useCallback(
+    (keys) => {
+      if (!manifest || keys.length === 0) return
+
+      const missing = keys.filter((key) => {
+        return !loadedChunksRef.current[key] && !loadingKeys.current.has(key)
+      })
+      if (missing.length === 0) return
+
+      missing.forEach((key) => loadingKeys.current.add(key))
+
+      Promise.all(
+        missing.map((key) => {
+          const chunkInfo = manifest.chunks.find((chunk) => chunk.key === key)
+          if (!chunkInfo) return Promise.resolve(null)
+
+          return fetch(`${DATA_ROOT}${chunkInfo.file}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`Failed to load Gwangju building chunk ${key}: ${response.status}`)
+              }
+              return response.json()
+            })
+            .then((geoJson) => [key, geoJson])
+            .catch((error) => {
+              console.error(error)
+              return null
+            })
+        })
+      ).then((entries) => {
+        missing.forEach((key) => loadingKeys.current.delete(key))
+
+        const nextEntries = entries.filter(Boolean)
+        if (nextEntries.length === 0) return
+
+        setLoadedChunks((current) => {
+          const next = { ...current }
+          nextEntries.forEach(([key, geoJson]) => {
+            next[key] = geoJson
+          })
+          loadedChunksRef.current = next
+          return next
+        })
+      })
+    },
+    [manifest]
+  )
+
   useFrame(() => {
     if (!groupRef.current) return
 
     const t = scroll.offset
+    if (manifest && !preloadStarted.current && t >= CITY_PRELOAD_START) {
+      preloadStarted.current = true
+      loadChunkKeys(manifest.chunks.map((chunk) => chunk.key))
+    }
+
     const visible = isCitySceneVisible(t)
     groupRef.current.visible = visible
     if (!visible || !manifest) {
-      if (activeKeySignature.current !== '') {
-        activeKeySignature.current = ''
-        setActiveKeys([])
-      }
       return
     }
 
@@ -171,32 +227,7 @@ export default function GwangjuCity() {
 
     activeKeySignature.current = signature
     setActiveKeys(nextActive)
-
-    nextActive.forEach((key) => {
-      if (loadedChunks[key] || loadingKeys.current.has(key)) return
-
-      const chunkInfo = manifest.chunks.find((chunk) => chunk.key === key)
-      if (!chunkInfo) return
-
-      loadingKeys.current.add(key)
-      fetch(`${DATA_ROOT}${chunkInfo.file}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed to load Gwangju building chunk ${key}: ${response.status}`)
-          }
-          return response.json()
-        })
-        .then((geoJson) => {
-          setLoadedChunks((current) => ({
-            ...current,
-            [key]: geoJson,
-          }))
-        })
-        .catch(console.error)
-        .finally(() => {
-          loadingKeys.current.delete(key)
-        })
-    })
+    loadChunkKeys(nextActive)
   })
 
   return (

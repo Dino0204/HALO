@@ -89,7 +89,7 @@ export default function GwangjuLandmarks() {
 
   useFrame(() => {
     const t = scroll.offset
-    const cnuVisible = (t > 0.42 && t < 0.535) || t >= FINAL_MAP_REVEAL_START
+    const cnuVisible = (t > 0.4 && t < 0.535) || t >= FINAL_MAP_REVEAL_START
     const downtownVisible =
       (t >= 0.54 && t < 0.63) || (t > 0.72 && t < 0.92) || t >= FINAL_MAP_REVEAL_START
 

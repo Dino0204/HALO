@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { cityVisualPoint } from '../utils/gwangjuCityScale'
 
 const GEO_URL = '/data/provinces-geo-simple.json'
+const CITY_TRANSITION_START = 0.36
 const FINAL_MAP_REVEAL_START = 0.9
 
 const CITIES = [
@@ -103,7 +104,7 @@ function GwangjuBoundary() {
     const opacity = 0.82 + Math.sin(clock.elapsedTime * 3) * 0.12
 
     if (mapRef.current) {
-      mapRef.current.visible = t >= 0.27 && t < 0.42
+      mapRef.current.visible = t >= 0.27 && t < CITY_TRANSITION_START
       mapRef.current.children.forEach((line) => {
         line.material.opacity = opacity
       })
