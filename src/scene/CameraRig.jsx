@@ -48,9 +48,12 @@ const CEMETERY_CAM_TGT = { x: CEMETERY_POS.x, z: CEMETERY_POS.z }
 const _pos = new THREE.Vector3()
 const _tgt = new THREE.Vector3()
 const _viewDir = new THREE.Vector3()
+const _desiredUp = new THREE.Vector3()
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
 const MAP_UP = new THREE.Vector3(0, 0, -1)
 const MAP_UP_SINGULARITY_THRESHOLD = 0.92
+const CNU_DESCENT_START = 0.2857
+const CNU_DESCENT_END = 0.3571
 
 function lngLatToMapPoint(lng, lat) {
   return {
@@ -114,10 +117,10 @@ function buildKeyframes(gwangjuMapCenter) {
 function lerpKeyframes(t, keyframes) {
   let i = 0
   while (i < keyframes.length - 2 && keyframes[i + 1][0] <= t) i++
-  const [t0, px0, py0, pz0, tx0, ty0, tz0] = keyframes[i]
-  const [t1, px1, py1, pz1, tx1, ty1, tz1] = keyframes[i + 1]
+  const [t0, px0, py0, pz0, tx0, ty0, tz0, mode0] = keyframes[i]
+  const [t1, px1, py1, pz1, tx1, ty1, tz1, mode1] = keyframes[i + 1]
   const alpha = t1 === t0 ? 0 : THREE.MathUtils.clamp((t - t0) / (t1 - t0), 0, 1)
-  const s = THREE.MathUtils.smoothstep(alpha, 0, 1)
+  const s = mode0 === 'linear' && mode1 === 'linear' ? alpha : THREE.MathUtils.smoothstep(alpha, 0, 1)
   _pos.set(
     THREE.MathUtils.lerp(px0, px1, s),
     THREE.MathUtils.lerp(py0, py1, s),
@@ -130,17 +133,25 @@ function lerpKeyframes(t, keyframes) {
   )
 }
 
-function applyStableCameraUp(camera) {
+function applyStableCameraUp(camera, t) {
+  if (t >= CNU_DESCENT_START && t <= CNU_DESCENT_END) {
+    const progress = (t - CNU_DESCENT_START) / (CNU_DESCENT_END - CNU_DESCENT_START)
+    const blend = THREE.MathUtils.smoothstep(progress, 0, 1)
+    camera.up.lerpVectors(MAP_UP, WORLD_UP, blend).normalize()
+    return
+  }
+
   _viewDir.subVectors(_tgt, _pos).normalize()
   const lookDownAmount = Math.abs(_viewDir.dot(WORLD_UP))
   if (lookDownAmount > MAP_UP_SINGULARITY_THRESHOLD) {
-    camera.up.copy(MAP_UP)
+    _desiredUp.copy(MAP_UP)
   } else if (lookDownAmount < 0.6) {
-    camera.up.copy(WORLD_UP)
+    _desiredUp.copy(WORLD_UP)
   } else {
     const blend = (lookDownAmount - 0.6) / (MAP_UP_SINGULARITY_THRESHOLD - 0.6)
-    camera.up.lerpVectors(WORLD_UP, MAP_UP, blend).normalize()
+    _desiredUp.lerpVectors(WORLD_UP, MAP_UP, blend).normalize()
   }
+  camera.up.copy(_desiredUp)
 }
 
 export default function CameraRig() {
@@ -190,12 +201,12 @@ export default function CameraRig() {
 
     // Move camera
     lerpKeyframes(t, keyframesRef.current)
-    applyStableCameraUp(camera)
+    applyStableCameraUp(camera, t)
     camera.position.copy(_pos)
     camera.lookAt(_tgt)
 
     // Mouse offset only after the map-only Gwangju emphasis has finished.
-    if (t > 0.31 && t < 0.5) {
+    if (t > CNU_DESCENT_END && t < 0.5) {
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       camera.rotation.y += mx * ((6 * Math.PI) / 180)
