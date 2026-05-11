@@ -37,10 +37,6 @@ const _viewDir = new THREE.Vector3()
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
 const MAP_UP = new THREE.Vector3(0, 0, -1)
 const MAP_UP_SINGULARITY_THRESHOLD = 0.92
-const CITY_CAMERA_RANGES = [
-  [0.42, 0.63],
-  [0.72, 0.92],
-]
 
 function lngLatToMapPoint(lng, lat) {
   return {
@@ -89,10 +85,11 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.42, gwangjuMapCenter.x, 18, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.45, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
     [0.54, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
-    [0.63, MAP_CENTER.x, 80, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
-    [0.72, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
-    [0.81, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
-    [0.9, MAP_CENTER.x, 45, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
+    [0.63, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.68, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.72, gwangjuMapCenter.x, 8, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.81, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
+    [0.9, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
     [1.0, MAP_CENTER.x, 120, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
   ]
 }
@@ -116,19 +113,17 @@ function lerpKeyframes(t, keyframes) {
   )
 }
 
-function isCityCameraRange(t) {
-  return CITY_CAMERA_RANGES.some(([start, end]) => t >= start && t < end)
-}
-
-function applyStableCameraUp(camera, t) {
-  if (isCityCameraRange(t)) {
-    camera.up.copy(WORLD_UP)
-    return
-  }
-
+function applyStableCameraUp(camera) {
   _viewDir.subVectors(_tgt, _pos).normalize()
-  const mapUpIsSafe = Math.abs(_viewDir.dot(MAP_UP)) < MAP_UP_SINGULARITY_THRESHOLD
-  camera.up.copy(mapUpIsSafe ? MAP_UP : WORLD_UP)
+  const lookDownAmount = Math.abs(_viewDir.dot(WORLD_UP))
+  if (lookDownAmount > MAP_UP_SINGULARITY_THRESHOLD) {
+    camera.up.copy(MAP_UP)
+  } else if (lookDownAmount < 0.6) {
+    camera.up.copy(WORLD_UP)
+  } else {
+    const blend = (lookDownAmount - 0.6) / (MAP_UP_SINGULARITY_THRESHOLD - 0.6)
+    camera.up.lerpVectors(WORLD_UP, MAP_UP, blend).normalize()
+  }
 }
 
 export default function CameraRig() {
@@ -149,7 +144,9 @@ export default function CameraRig() {
       })
       .then((geoJson) => {
         if (cancelled) return
-        const gwangju = geoJson.features.find((feature) => feature.properties?.name === '광주광역시')
+        const gwangju = geoJson.features.find(
+          (feature) => feature.properties?.name === '광주광역시'
+        )
         if (!gwangju) {
           throw new Error('Gwangju boundary was not found in Korea map GeoJSON')
         }
@@ -176,7 +173,7 @@ export default function CameraRig() {
 
     // Move camera
     lerpKeyframes(t, keyframesRef.current)
-    applyStableCameraUp(camera, t)
+    applyStableCameraUp(camera)
     camera.position.copy(_pos)
     camera.lookAt(_tgt)
 
