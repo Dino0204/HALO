@@ -9,17 +9,21 @@ const GEUMNAMRO_CENTER = {
   z: (GWANGJU_LANDMARKS.geumnamroPark.z + GWANGJU_LANDMARKS.jeonilBuilding.z) / 2,
 }
 
+function seededRandom(seed) {
+  let value = seed
+  return function rng() {
+    value = (value * 1664525 + 1013904223) >>> 0
+    return value / 0x100000000
+  }
+}
+
 export default function TearGasParticles() {
-  const ref = useRef()
+  const smokeRef = useRef()
   const scroll = useScroll()
 
   const { base, positions } = useMemo(() => {
     const base = new Float32Array(COUNT * 3)
-    let seed = 1234
-    function rng() {
-      seed = (seed * 1664525 + 1013904223) >>> 0
-      return seed / 0x100000000
-    }
+    const rng = seededRandom(1234)
     for (let i = 0; i < COUNT; i++) {
       const center = i < COUNT / 2 ? GWANGJU_LANDMARKS.cnuGate : GEUMNAMRO_CENTER
       const spreadX = i < COUNT / 2 ? 18 : 36
@@ -32,21 +36,19 @@ export default function TearGasParticles() {
   }, [])
 
   useFrame(({ clock }) => {
-    if (!ref.current) return
-    const t = scroll.offset
-    ref.current.visible = t > 0.36 && t < 0.63
-    if (!ref.current.visible) return
-
-    const pos = ref.current.geometry.attributes.position.array
+    if (!smokeRef.current) return
+    smokeRef.current.visible = scroll.offset > 0.36 && scroll.offset < 0.63
+    if (!smokeRef.current.visible) return
+    const pos = smokeRef.current.geometry.attributes.position.array
     const speed = clock.elapsedTime * 1.5
     for (let i = 0; i < COUNT; i++) {
       pos[i * 3 + 1] = (base[i * 3 + 1] + speed) % 12
     }
-    ref.current.geometry.attributes.position.needsUpdate = true
+    smokeRef.current.geometry.attributes.position.needsUpdate = true
   })
 
   return (
-    <points ref={ref}>
+    <points ref={smokeRef}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
