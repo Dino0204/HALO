@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useSceneStore } from '../store/sceneStore'
 
@@ -105,6 +105,7 @@ export default function TextOverlay() {
   const currentScene = useSceneStore((s) => s.currentScene)
   const containerRef = useRef()
   const prevScene = useRef(-1)
+  const [showHint, setShowHint] = useState(true)
 
   // Mouse interaction for Gwangju close-up (Scene 03–06)
   useEffect(() => {
@@ -138,6 +139,56 @@ export default function TextOverlay() {
 
   const font = "'Noto Serif KR', serif"
 
+  // Auto-scroll logic
+  const scrollInterval = useRef(null)
+  const isPressing = useRef(false)
+
+  const startAutoScroll = () => {
+    if (isPressing.current) return
+    isPressing.current = true
+    setShowHint(false)
+
+    const el = window._518scrollEl || document.querySelector('.hide-scrollbar')
+    if (!el) return
+
+    const scrollSpeed = 6
+    const step = () => {
+      if (!isPressing.current) return
+      el.scrollTop += scrollSpeed
+      scrollInterval.current = requestAnimationFrame(step)
+    }
+    scrollInterval.current = requestAnimationFrame(step)
+  }
+
+  const stopAutoScroll = () => {
+    isPressing.current = false
+    setShowHint(true)
+    if (scrollInterval.current) cancelAnimationFrame(scrollInterval.current)
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (!e.repeat) startAutoScroll()
+      }
+    }
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        stopAutoScroll()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+      stopAutoScroll()
+    }
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -150,6 +201,64 @@ export default function TextOverlay() {
         color: '#e8e0d0',
       }}
     >
+      <style>
+        {`
+          @keyframes hintPulse {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.98); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.02); }
+            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.98); }
+          }
+        `}
+      </style>
+
+      {/* Interaction Hint - Visible when not pressing space */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '70%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.8rem',
+          opacity: showHint ? 1 : 0,
+          pointerEvents: 'none',
+          transition: 'opacity 0.6s ease, visibility 0.6s',
+          visibility: showHint ? 'visible' : 'hidden',
+          animation: 'hintPulse 3s infinite ease-in-out',
+        }}
+      >
+        <div
+          style={{
+            padding: '0.5rem 1.2rem',
+            border: '1.5px solid rgba(232, 224, 208, 0.6)',
+            borderRadius: '6px',
+            fontSize: '0.8rem',
+            fontFamily: 'monospace',
+            letterSpacing: '0.3em',
+            background: 'rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(8px)',
+            boxShadow: '0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(232, 224, 208, 0.1)',
+            color: '#ffffff',
+            fontWeight: 'bold',
+          }}
+        >
+          SPACE HOLD
+        </div>
+        <span
+          style={{
+            fontSize: '0.75rem',
+            letterSpacing: '0.15em',
+            fontWeight: '500',
+            color: '#e8e0d0',
+            textShadow: '0 2px 10px rgba(0,0,0,0.9)',
+          }}
+        >
+          꾹 눌러서 진행하기
+        </span>
+      </div>
+
       {SCENE_CONTENT.map((sc, i) => (
         <div
           key={i}
