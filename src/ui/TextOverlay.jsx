@@ -114,6 +114,54 @@ export default function TextOverlay() {
 
   const font = "'Noto Serif KR', serif"
 
+  // Auto-scroll logic
+  const scrollInterval = useRef(null)
+  const isPressing = useRef(false)
+
+  const startAutoScroll = () => {
+    if (isPressing.current) return
+    isPressing.current = true
+    
+    const el = window._518scrollEl || document.querySelector('.hide-scrollbar')
+    if (!el) return
+
+    const scrollSpeed = 6
+    const step = () => {
+      if (!isPressing.current) return
+      el.scrollTop += scrollSpeed
+      scrollInterval.current = requestAnimationFrame(step)
+    }
+    scrollInterval.current = requestAnimationFrame(step)
+  }
+
+  const stopAutoScroll = () => {
+    isPressing.current = false
+    if (scrollInterval.current) cancelAnimationFrame(scrollInterval.current)
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (!e.repeat) startAutoScroll()
+      }
+    }
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        stopAutoScroll()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+      stopAutoScroll()
+    }
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -126,6 +174,35 @@ export default function TextOverlay() {
         color: '#e8e0d0',
       }}
     >
+      {/* Interaction Hint */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '65%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.6rem',
+          opacity: 0.4,
+        }}
+      >
+        <div style={{
+          padding: '0.3rem 0.8rem',
+          border: '1px solid rgba(232, 224, 208, 0.2)',
+          borderRadius: '4px',
+          fontSize: '0.65rem',
+          fontFamily: 'monospace',
+          letterSpacing: '0.2em',
+          background: 'rgba(0,0,0,0.15)',
+          backdropFilter: 'blur(4px)'
+        }}>
+          SPACE
+        </div>
+        <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', fontWeight: 'bold' }}>HOLD TO EXPLORE</span>
+      </div>
+
       {SCENE_CONTENT.map((sc, i) => (
         <div
           key={i}
