@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useScroll, useGLTF } from '@react-three/drei'
+import { useScroll, useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
@@ -13,6 +13,8 @@ const BUILDING_POS = {
 }
 const BUILDING_MODEL_SCALE = 0.05
 const BULLET_COUNT = 245
+const HELICOPTER_MODEL_URL = '/models/bell_huey_helicopter.glb'
+const HELICOPTER_MODEL_SCALE = 0.42
 
 function seededRandom(seed) {
   let value = seed
@@ -24,9 +26,23 @@ function seededRandom(seed) {
 
 function Helicopter() {
   const ref = useRef()
-  const rotorRef = useRef()
   const scroll = useScroll()
-  useFrame(({ clock }) => {
+  const { scene, animations } = useGLTF(HELICOPTER_MODEL_URL)
+  const helicopter = useMemo(() => scene.clone(true), [scene])
+  const { actions } = useAnimations(animations, ref)
+
+  useEffect(() => {
+    Object.values(actions).forEach((action) => {
+      action.reset().setLoop(THREE.LoopRepeat).play()
+      action.timeScale = 2.6
+    })
+
+    return () => {
+      Object.values(actions).forEach((action) => action.stop())
+    }
+  }, [actions])
+
+  useFrame(() => {
     if (!ref.current) return
     const t = scroll.offset
     const visible = t >= SCROLL_START && t < SCROLL_END
@@ -34,20 +50,13 @@ function Helicopter() {
     if (!visible) return
     const progress = (t - SCROLL_START) / (SCROLL_END - SCROLL_START)
     ref.current.position.x = BUILDING_POS.x + THREE.MathUtils.lerp(-14, 14, progress)
-    ref.current.position.y = 14
-    ref.current.position.z = BUILDING_POS.z - 4
-    if (rotorRef.current) rotorRef.current.rotation.y = clock.elapsedTime * 25
+    ref.current.position.y = 6
+    ref.current.position.z = BUILDING_POS.z + 1
   })
+
   return (
-    <group ref={ref} visible={false}>
-      <mesh>
-        <boxGeometry args={[3, 0.8, 4]} />
-        <meshStandardMaterial color="#1a1a1a" />
-      </mesh>
-      <mesh ref={rotorRef} position={[0, 0.6, 0]}>
-        <cylinderGeometry args={[2.5, 2.5, 0.05, 16]} />
-        <meshStandardMaterial color="#222222" transparent opacity={0.4} />
-      </mesh>
+    <group ref={ref} visible={false} rotation={[0, Math.PI / 2, 0]} scale={HELICOPTER_MODEL_SCALE}>
+      <primitive object={helicopter} />
     </group>
   )
 }
@@ -127,3 +136,4 @@ export default function JeonilBuilding() {
 }
 
 useGLTF.preload('/models/jeonil-building.glb')
+useGLTF.preload(HELICOPTER_MODEL_URL)

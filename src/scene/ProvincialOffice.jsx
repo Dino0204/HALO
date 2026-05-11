@@ -1,12 +1,36 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
+import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
+const SCROLL_START = 0.7857
+const SCROLL_END = 0.8571
 const OFFICE_POS = GWANGJU_LANDMARKS.provincialOffice
 const OFFICE_MODEL_URL = '/models/former-jeonnam-provincial-office.glb'
+const ARMORED_VEHICLE_MODEL_URL = '/models/m113a1.glb'
 const OFFICE_MODEL_SCALE = 0.08
+const ARMORED_VEHICLE_MODEL_SCALE = 0.56
 const VEHICLE_START_Z = OFFICE_POS.z + 34
+const VEHICLE_TRAVEL_DISTANCE = 30
+const VEHICLE_OFFSETS = [
+  { x: 0, z: 0 },
+  { x: 2.35, z: 6 },
+  { x: -2.35, z: 12 },
+]
+
+function ArmoredVehicle({ vehicleRef, offsetX, offsetZ }) {
+  const { scene } = useGLTF(ARMORED_VEHICLE_MODEL_URL)
+  const model = useMemo(() => scene.clone(true), [scene])
+
+  return (
+    <group ref={vehicleRef} position={[OFFICE_POS.x + offsetX, 0.04, VEHICLE_START_Z + offsetZ]}>
+      <group rotation={[0, Math.PI / 2, 0]} scale={ARMORED_VEHICLE_MODEL_SCALE}>
+        <primitive object={model} />
+      </group>
+    </group>
+  )
+}
 
 export default function ProvincialOffice() {
   const groupRef = useRef()
@@ -16,17 +40,17 @@ export default function ProvincialOffice() {
   const scroll = useScroll()
   const { scene } = useGLTF(OFFICE_MODEL_URL)
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     const t = scroll.offset
-    const visible = t > 0.7857 && t < 0.8571
+    const visible = t > SCROLL_START && t < SCROLL_END
     if (groupRef.current) groupRef.current.visible = visible
     if (!visible) return
 
-    // Move armored vehicles toward the building
-    const spd = clock.elapsedTime * 0.8
+    const progress = THREE.MathUtils.smoothstep(t, SCROLL_START, SCROLL_END)
     ;[v1, v2, v3].forEach((vRef, i) => {
       if (!vRef.current) return
-      vRef.current.position.z = VEHICLE_START_Z - ((spd + i * 6) % 30)
+      vRef.current.position.z =
+        VEHICLE_START_Z + VEHICLE_OFFSETS[i].z - progress * VEHICLE_TRAVEL_DISTANCE
     })
   })
 
@@ -38,21 +62,24 @@ export default function ProvincialOffice() {
         rotation={[0, Math.PI, 0]}
         scale={OFFICE_MODEL_SCALE}
       />
-      {/* Armored vehicles */}
-      <mesh ref={v1} position={[OFFICE_POS.x, 0.55, VEHICLE_START_Z]}>
-        <boxGeometry args={[1.8, 1.1, 3.0]} />
-        <meshStandardMaterial color="#1a3a1a" />
-      </mesh>
-      <mesh ref={v2} position={[OFFICE_POS.x + 2, 0.55, VEHICLE_START_Z + 6]}>
-        <boxGeometry args={[1.8, 1.1, 3.0]} />
-        <meshStandardMaterial color="#1a3a1a" />
-      </mesh>
-      <mesh ref={v3} position={[OFFICE_POS.x - 2, 0.55, VEHICLE_START_Z + 12]}>
-        <boxGeometry args={[1.8, 1.1, 3.0]} />
-        <meshStandardMaterial color="#1a3a1a" />
-      </mesh>
+      <ArmoredVehicle
+        vehicleRef={v1}
+        offsetX={VEHICLE_OFFSETS[0].x}
+        offsetZ={VEHICLE_OFFSETS[0].z}
+      />
+      <ArmoredVehicle
+        vehicleRef={v2}
+        offsetX={VEHICLE_OFFSETS[1].x}
+        offsetZ={VEHICLE_OFFSETS[1].z}
+      />
+      <ArmoredVehicle
+        vehicleRef={v3}
+        offsetX={VEHICLE_OFFSETS[2].x}
+        offsetZ={VEHICLE_OFFSETS[2].z}
+      />
     </group>
   )
 }
 
 useGLTF.preload(OFFICE_MODEL_URL)
+useGLTF.preload(ARMORED_VEHICLE_MODEL_URL)
