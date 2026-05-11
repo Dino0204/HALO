@@ -26,7 +26,7 @@ const SCENE_RANGES = [
 const { cnuGate, geumnamroPark, jeonilBuilding, provincialOffice } = GWANGJU_LANDMARKS
 const GEO_URL = '/data/provinces-geo-simple.json'
 
-const CNU_POS = { x: cnuGate.x - 2.2, z: cnuGate.z + 7.5 }
+const CNU_POS = { x: cnuGate.x - 1.4, z: cnuGate.z + 4.8 }
 const CNU_TGT = { x: cnuGate.x, z: cnuGate.z }
 const GEUMNAMRO_POS = { x: geumnamroPark.x - 3.2, z: geumnamroPark.z + 8.5 }
 const GEUMNAMRO_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
@@ -96,7 +96,7 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.1429, MAP_CENTER.x, 78, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
     [0.2143, gwangjuMapCenter.x, 54, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.2857, gwangjuMapCenter.x, 24, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.3571, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
+    [0.3571, CNU_POS.x, 0.9, CNU_POS.z, CNU_TGT.x, 0.35, CNU_TGT.z],
     [0.4286, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
     [0.5000, MBC_CAM_POS.x, 5, MBC_CAM_POS.z, MBC_CAM_TGT.x, 3, MBC_CAM_TGT.z],
     [0.5714, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
