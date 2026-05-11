@@ -1,16 +1,19 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
-import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
 const FINAL_MAP_REVEAL_START = 0.9286
+const CNU_GATE_MARKER_SCALE = 0.3
 
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
 
   return (
-    <group position={[x, 0, z]} rotation={[0, THREE.MathUtils.degToRad(-13), 0]}>
+    <group
+      position={[x, 0, z - 1]}
+      scale={CNU_GATE_MARKER_SCALE}
+    >
       <mesh position={[-1.75, 0.8, 0]}>
         <boxGeometry args={[0.42, 1.6, 0.46]} />
         <meshStandardMaterial color="#a68f72" roughness={0.72} />

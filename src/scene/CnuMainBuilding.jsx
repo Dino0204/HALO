@@ -6,6 +6,7 @@ import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 const SCROLL_START = 0.2857
 const SCROLL_END = 0.5
 const FINAL_MAP_REVEAL_START = 0.9286
+const CNU_GATE_MODEL_SCALE = 0.035
 
 export default function CnuMainBuilding() {
   const groupRef = useRef()
@@ -26,7 +27,7 @@ export default function CnuMainBuilding() {
       <primitive
         object={scene}
         position={[x, 0, z - 3]}
-        scale={0.05}
+        scale={CNU_GATE_MODEL_SCALE}
       />
     </group>
   )
