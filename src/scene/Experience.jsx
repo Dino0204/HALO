@@ -3,6 +3,8 @@ import CameraRig from './CameraRig'
 import KoreaMap from './KoreaMap'
 import MapMarkers from './MapMarkers'
 import GwangjuCity from './GwangjuCity'
+import GwangjuRoads from './GwangjuRoads'
+import GwangjuLandmarks from './GwangjuLandmarks'
 import TearGasParticles from './TearGasParticles'
 import VehicleConvoy from './VehicleConvoy'
 import FlashScene from './FlashScene'
@@ -17,6 +19,8 @@ export default function Experience() {
       <KoreaMap />
       <MapMarkers />
       <GwangjuCity />
+      <GwangjuRoads />
+      <GwangjuLandmarks />
       <TearGasParticles />
       <VehicleConvoy />
       <FlashScene />

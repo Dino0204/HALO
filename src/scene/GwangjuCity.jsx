@@ -13,6 +13,14 @@ const DATA_ROOT = '/data/gwangju-buildings/'
 const CITY_VISIBLE_START = 0.42
 const CITY_VISIBLE_END = 0.92
 const LOAD_RADIUS = 70
+const BUILDING_COLORS = {
+  civic: new THREE.Color('#8f8270'),
+  commercial: new THREE.Color('#8b8070'),
+  education: new THREE.Color('#6d8f91'),
+  housing: new THREE.Color('#625e56'),
+  industrial: new THREE.Color('#4d4d45'),
+  default: new THREE.Color('#666666'),
+}
 
 function isCitySceneVisible(t) {
   return (t > CITY_VISIBLE_START && t < 0.63) || (t > 0.72 && t < CITY_VISIBLE_END)
@@ -27,10 +35,29 @@ function chunkIntersectsView(chunk, camera) {
   return Math.hypot(x - nearestX, z - nearestZ) < LOAD_RADIUS
 }
 
+function getBuildingColor(type = '') {
+  if (type.includes('university') || type.includes('school') || type.includes('college')) {
+    return BUILDING_COLORS.education
+  }
+  if (type.includes('commercial') || type.includes('retail') || type.includes('office')) {
+    return BUILDING_COLORS.commercial
+  }
+  if (type.includes('apartments') || type.includes('house') || type.includes('residential')) {
+    return BUILDING_COLORS.housing
+  }
+  if (type.includes('industrial') || type.includes('warehouse') || type.includes('factory')) {
+    return BUILDING_COLORS.industrial
+  }
+  if (type.includes('public') || type.includes('government') || type.includes('civic')) {
+    return BUILDING_COLORS.civic
+  }
+  return BUILDING_COLORS.default
+}
+
 function BuildingChunk({ chunk, name }) {
   const meshRef = useRef()
 
-  const matrices = useMemo(() => {
+  const instances = useMemo(() => {
     const dummy = new THREE.Object3D()
     return chunk.features.map((feature) => {
       const [minX, minZ, maxX, maxZ] = cityVisualBbox(feature.properties.bbox)
@@ -40,20 +67,27 @@ function BuildingChunk({ chunk, name }) {
       dummy.position.set((minX + maxX) / 2, height / 2, (minZ + maxZ) / 2)
       dummy.scale.set(width, height, depth)
       dummy.updateMatrix()
-      return dummy.matrix.clone()
+      return {
+        color: getBuildingColor(feature.properties.building),
+        matrix: dummy.matrix.clone(),
+      }
     })
   }, [chunk])
 
   useEffect(() => {
     if (!meshRef.current) return
-    matrices.forEach((matrix, index) => meshRef.current.setMatrixAt(index, matrix))
+    instances.forEach(({ color, matrix }, index) => {
+      meshRef.current.setMatrixAt(index, matrix)
+      meshRef.current.setColorAt(index, color)
+    })
     meshRef.current.instanceMatrix.needsUpdate = true
-  }, [matrices])
+    meshRef.current.instanceColor.needsUpdate = true
+  }, [instances])
 
   return (
-    <instancedMesh name={name} ref={meshRef} args={[null, null, matrices.length]} frustumCulled={false}>
+    <instancedMesh name={name} ref={meshRef} args={[null, null, instances.length]} frustumCulled={false}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#666666" />
+      <meshStandardMaterial vertexColors roughness={0.78} metalness={0.04} />
     </instancedMesh>
   )
 }
