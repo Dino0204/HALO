@@ -37,7 +37,7 @@ export default function TearGasParticles() {
 
   useFrame(({ clock }) => {
     if (!smokeRef.current) return
-    smokeRef.current.visible = scroll.offset > 0.36 && scroll.offset < 0.63
+    smokeRef.current.visible = scroll.offset > 0.2857 && scroll.offset < 0.5714
     if (!smokeRef.current.visible) return
     const pos = smokeRef.current.geometry.attributes.position.array
     const speed = clock.elapsedTime * 1.5

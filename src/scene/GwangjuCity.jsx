@@ -11,10 +11,10 @@ import {
 
 const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
 const DATA_ROOT = '/data/gwangju-buildings/'
-const CITY_VISIBLE_START = 0.36
-const CITY_VISIBLE_END = 0.92
-const CITY_PRELOAD_START = 0.27
-const FINAL_MAP_REVEAL_START = 0.9
+const CITY_VISIBLE_START = 0.2857
+const CITY_VISIBLE_END = 0.9286
+const CITY_PRELOAD_START = 0.2143
+const FINAL_MAP_REVEAL_START = 0.9286
 const LOAD_RADIUS = 70
 const BUILDING_COLORS = {
   civic: new THREE.Color('#8f8270'),
@@ -32,8 +32,8 @@ const LANDMARK_CLEAR_ZONES = [
 
 function isCitySceneVisible(t) {
   return (
-    (t > CITY_VISIBLE_START && t < 0.63) ||
-    (t > 0.72 && t < CITY_VISIBLE_END) ||
+    (t > CITY_VISIBLE_START && t < 0.6429) ||
+    (t > 0.7143 && t < CITY_VISIBLE_END) ||
     t >= FINAL_MAP_REVEAL_START
   )
 }

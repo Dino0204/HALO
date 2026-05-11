@@ -7,8 +7,8 @@ import { cityVisualBbox } from '../utils/gwangjuCityScale'
 const TAXIS = 18
 const BUSES = 5
 const ROADS_URL = '/data/gwangju-roads/roads.json'
-const VEHICLE_VISIBLE_START = 0.45
-const VEHICLE_VISIBLE_END = 0.54
+const VEHICLE_VISIBLE_START = 0.3571
+const VEHICLE_VISIBLE_END = 0.4286
 const TAXI_SIZE = [0.38, 0.2, 0.72]
 const BUS_SIZE = [0.58, 0.34, 1.32]
 const VARIATION = [0.0, 0.42, -0.24, 0.7, -0.48, 0.18, -0.62, 0.34, -0.12, 0.56]

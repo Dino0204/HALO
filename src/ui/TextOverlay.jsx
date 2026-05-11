@@ -58,34 +58,57 @@ const SCENE_CONTENT = [
       caption: '버스와 택시가 거리를 메우다',
     },
   },
-  // Scene 06
+  // Scene 06 — 광주MBC 방화 (NEW)
+  {
+    topLeft: '1980.05.20 밤 9시 50분',
+    topLeftColor: '#ff6666',
+    center: '광주MBC가 불탔다.',
+    bottom: '방송은 시민이 죽어가는 도시를 보도하지 않았다.\n분노한 시민들이 방송국에 불을 질렀다.',
+    bottomSmall: '광주MBC 사옥 — 5월 20일 21:50',
+  },
+  // Scene 07 — 집단 발포 (was Scene 06)
   {
     topLeft: '1980.05.21 오후 1시',
     topLeftColor: '#ff4444',
     center: '계엄군이 시민을 향해 총을 쐈다.',
     bottom: '그날 금남로에서\n수십 명이 쓰러졌다.',
-    bottomRight: '— 5·18기념재단 공식 기록',
+    bottomRight: '— 도청 앞 집단발포 (5·18민주화운동기록관)',
   },
-  // Scene 07
+  // Scene 08 — 전일빌딩 헬기 사격 (NEW)
+  {
+    topLeft: '1980.05.21 오후',
+    topLeftColor: '#ff6666',
+    center: '하늘에서도 총탄이 쏟아졌다.',
+    bottom: '전일빌딩 외벽에서\n245개의 헬기 사격 탄흔이 발견됐다.',
+    bottomRight: '— 국립과학수사연구원 공식 감정 (2017)',
+  },
+  // Scene 09 — 광주 봉쇄 (was Scene 07)
   {
     topLeft: '1980.05.21 이후',
     center: '계엄군이 광주를 완전히 차단했다.',
     bottom: '전화가 끊겼다.\n도로가 막혔다.\n언론은 침묵했다.',
     bottomRight: '외부 세계는 광주에서 무슨 일이 일어나는지 알지 못했다.',
   },
-  // Scene 08
+  // Scene 10 — 5.18민주광장 제1차 시민궐기대회 (NEW)
+  {
+    topLeft: '1980.05.23 오후 1시',
+    center: '수십만 명이 도청 앞 광장에 모였다.',
+    bottom: '봉쇄된 광주는 스스로의 질서를 만들고 있었다.\n시민궐기대회는 5월 26일까지 매일 이어졌다.',
+    bottomRight: '— 제1차 민주수호 범시민궐기대회',
+  },
+  // Scene 11 — 장갑차 도청 진입 (was Scene 08)
   {
     topLeft: '1980.05.27 새벽 4시',
     topLeftColor: '#ff4444',
     centerQuote: '지금 계엄군이 쳐들어오고 있습니다.\n시민 여러분, 우리를 잊지 말아 주십시오.',
     bottom: '도청에 남은 시민군은 끝까지 싸웠다.',
   },
-  // Scene 09
+  // Scene 12 — 병원/통계 (was Scene 09)
   {
     topCenter: '9일간의 기록',
     stats: true,
-    bottom: '이것은 공식적으로 인정된 숫자다.\n실제 피해는 여전히 밝혀지지 않고 있다.',
-    bottomSmall: '출처: 5·18기념재단 공식 집계',
+    bottom: '이것은 공식적으로 인정된 숫자다.\n발표 기관에 따라 수치는 조금씩 다르며,\n모든 피해가 완전히 밝혀지지 않았다.',
+    bottomSmall: '출처: 5·18 유공자 유족회 등 4개 단체 발표',
     eventImage: {
       src: '/event-cards/aftermath-casualties-event.jpg',
       date: '1980.05.27',
@@ -93,7 +116,7 @@ const SCENE_CONTENT = [
       caption: '남겨진 피해와 기록',
     },
   },
-  // Scene 10
+  // Scene 13 — 기억 / 국립5.18민주묘지 (was Scene 10)
   {
     finalMessage: '우리가 기억합니다',
     finalSub: '5·18민주화운동',
@@ -547,6 +570,8 @@ export default function TextOverlay() {
         지리 데이터: © OpenStreetMap contributors (ODbL)
         <br />
         역사 자료: 5·18기념재단, 5·18민주화운동기록관, 민주화운동기념사업회
+        <br />
+        3D 모델: 한국학중앙연구원 광주문화예술인문스토리플랫폼 (CC BY-SA 4.0)
       </div>
     </div>
   )

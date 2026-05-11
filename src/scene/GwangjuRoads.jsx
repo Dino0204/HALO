@@ -5,9 +5,9 @@ import * as THREE from 'three'
 import { GWANGJU_LANDMARKS, cityVisualBbox } from '../utils/gwangjuCityScale'
 
 const ROADS_URL = '/data/gwangju-roads/roads.json'
-const CITY_VISIBLE_START = 0.36
-const CITY_VISIBLE_END = 0.92
-const FINAL_MAP_REVEAL_START = 0.9
+const CITY_VISIBLE_START = 0.2857
+const CITY_VISIBLE_END = 0.9286
+const FINAL_MAP_REVEAL_START = 0.9286
 const ROAD_Y = {
   major: 0.055,
   street: 0.065,
@@ -17,8 +17,8 @@ const ROAD_Y = {
 
 function isCitySceneVisible(t) {
   return (
-    (t > CITY_VISIBLE_START && t < 0.63) ||
-    (t > 0.72 && t < CITY_VISIBLE_END) ||
+    (t > CITY_VISIBLE_START && t < 0.6429) ||
+    (t > 0.7143 && t < CITY_VISIBLE_END) ||
     t >= FINAL_MAP_REVEAL_START
   )
 }

@@ -71,11 +71,11 @@ export default function GwangjuBlockade() {
 
   useFrame(() => {
     const t = scroll.offset
-    const visible = t > 0.6 && t < 0.73
+    const visible = t > 0.62 && t < 0.72
     if (meshRef.current) meshRef.current.visible = visible
     if (visible) {
-      const fadeIn = THREE.MathUtils.smoothstep(t, 0.63, 0.67)
-      const fadeOut = 1 - THREE.MathUtils.smoothstep(t, 0.69, 0.72)
+      const fadeIn = THREE.MathUtils.smoothstep(t, 0.65, 0.68)
+      const fadeOut = 1 - THREE.MathUtils.smoothstep(t, 0.69, 0.71)
       materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut
     } else {
       materialRef.current.uniforms.uOpacity.value = 0

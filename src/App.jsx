@@ -15,7 +15,7 @@ export default function App() {
         gl={{ antialias: false }}
         camera={{ fov: 60, near: 0.1, far: 2000 }}
       >
-        <ScrollControls pages={11} damping={0.15}>
+        <ScrollControls pages={14} damping={0.15}>
           <ScrollSync />
           <Experience />
         </ScrollControls>

@@ -4,19 +4,23 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { useSceneStore } from '../store/sceneStore'
 import { GWANGJU_CITY_CENTER, GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import { MBC_POS, CEMETERY_POS } from './landmarkPositions'
 
 const SCENE_RANGES = [
-  [0.0, 0.09],
-  [0.09, 0.18],
-  [0.18, 0.27],
-  [0.27, 0.36],
-  [0.36, 0.45],
-  [0.45, 0.54],
-  [0.54, 0.63],
-  [0.63, 0.72],
-  [0.72, 0.81],
-  [0.81, 0.9],
-  [0.9, 1.0],
+  [0.0000, 0.0714], // 00 한국 지도
+  [0.0714, 0.1429], // 01 12·12
+  [0.1429, 0.2143], // 02 전국 시위
+  [0.2143, 0.2857], // 03 광주 확대
+  [0.2857, 0.3571], // 04 진압
+  [0.3571, 0.4286], // 05 차량 시위
+  [0.4286, 0.5000], // 06 광주MBC 방화
+  [0.5000, 0.5714], // 07 집단 발포
+  [0.5714, 0.6429], // 08 전일빌딩
+  [0.6429, 0.7143], // 09 봉쇄
+  [0.7143, 0.7857], // 10 시민궐기대회
+  [0.7857, 0.8571], // 11 도청 진입
+  [0.8571, 0.9286], // 12 병원
+  [0.9286, 1.0001], // 13 기억/묘지
 ]
 
 const { cnuGate, geumnamroPark, jeonilBuilding } = GWANGJU_LANDMARKS
@@ -31,6 +35,15 @@ const OFFICE_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
 const MAP_CENTER = { x: 0, z: 4 }
 const GWANGJU_MAP_FALLBACK = { x: -13, z: 32 }
 const FINAL_CITY_VIEW = { x: GWANGJU_CITY_CENTER.x - 10, z: GWANGJU_CITY_CENTER.z + 4 }
+
+const MBC_CAM_POS = { x: MBC_POS.x + 8, z: MBC_POS.z + 14 }
+const MBC_CAM_TGT = { x: MBC_POS.x, z: MBC_POS.z }
+const JEONIL_CAM_POS = { x: jeonilBuilding.x, z: jeonilBuilding.z + 18 }
+const JEONIL_CAM_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
+const SQUARE_CAM_POS = { x: jeonilBuilding.x, z: jeonilBuilding.z + 22 }
+const SQUARE_CAM_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z + 4 }
+const CEMETERY_CAM_POS = { x: CEMETERY_POS.x + 15, z: CEMETERY_POS.z + 25 }
+const CEMETERY_CAM_TGT = { x: CEMETERY_POS.x, z: CEMETERY_POS.z }
 
 const _pos = new THREE.Vector3()
 const _tgt = new THREE.Vector3()
@@ -78,20 +91,23 @@ function getFeatureMapCenter(feature) {
 
 function buildKeyframes(gwangjuMapCenter) {
   return [
-    [0.0, MAP_CENTER.x, 80, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
-    [0.09, -10, 70, -20, -10, 0, -26],
-    [0.18, MAP_CENTER.x, 78, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
-    [0.27, gwangjuMapCenter.x, 54, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.36, gwangjuMapCenter.x, 24, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.45, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
-    [0.54, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
-    [0.63, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.68, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.72, gwangjuMapCenter.x, 8, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
-    [0.81, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
-    [0.9, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
-    [0.94, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
-    [1.0, FINAL_CITY_VIEW.x, 220, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
+    [0.0000, MAP_CENTER.x, 80, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
+    [0.0714, -10, 70, -20, -10, 0, -26],
+    [0.1429, MAP_CENTER.x, 78, MAP_CENTER.z, MAP_CENTER.x, 0, MAP_CENTER.z],
+    [0.2143, gwangjuMapCenter.x, 54, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.2857, gwangjuMapCenter.x, 24, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.3571, CNU_POS.x, 1.1, CNU_POS.z, CNU_TGT.x, 0.38, CNU_TGT.z],
+    [0.4286, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
+    [0.5000, MBC_CAM_POS.x, 5, MBC_CAM_POS.z, MBC_CAM_TGT.x, 3, MBC_CAM_TGT.z],
+    [0.5714, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
+    [0.6429, JEONIL_CAM_POS.x, 4, JEONIL_CAM_POS.z, JEONIL_CAM_TGT.x, 12, JEONIL_CAM_TGT.z],
+    [0.7143, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
+    [0.7857, SQUARE_CAM_POS.x, 12, SQUARE_CAM_POS.z, SQUARE_CAM_TGT.x, 1, SQUARE_CAM_TGT.z],
+    [0.8571, OFFICE_POS.x, 1.45, OFFICE_POS.z, OFFICE_TGT.x, 0.5, OFFICE_TGT.z],
+    [0.9286, OFFICE_POS.x - 2.5, 1.15, OFFICE_POS.z + 4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
+    [0.9500, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
+    [0.9643, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
+    [1.0000, CEMETERY_CAM_POS.x, 8, CEMETERY_CAM_POS.z, CEMETERY_CAM_TGT.x, 2, CEMETERY_CAM_TGT.z],
   ]
 }
 
@@ -166,7 +182,7 @@ export default function CameraRig() {
 
     // Update scene store
     const idx = SCENE_RANGES.findIndex(([s, e]) => t >= s && t < e)
-    const scene = idx === -1 ? 10 : idx
+    const scene = idx === -1 ? 13 : idx
     if (scene !== prevSceneRef.current) {
       prevSceneRef.current = scene
       useSceneStore.getState().setScene(scene)
@@ -179,7 +195,7 @@ export default function CameraRig() {
     camera.lookAt(_tgt)
 
     // Mouse offset only after the map-only Gwangju emphasis has finished.
-    if (t > 0.39 && t < 0.63) {
+    if (t > 0.31 && t < 0.5) {
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       camera.rotation.y += mx * ((6 * Math.PI) / 180)

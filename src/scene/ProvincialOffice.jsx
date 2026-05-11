@@ -15,7 +15,7 @@ export default function ProvincialOffice() {
 
   useFrame(({ clock }) => {
     const t = scroll.offset
-    const visible = t > 0.72 && t < 0.81
+    const visible = t > 0.7857 && t < 0.8571
     if (groupRef.current) groupRef.current.visible = visible
     if (!visible) return
 

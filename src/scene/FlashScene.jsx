@@ -16,7 +16,7 @@ export default function FlashScene() {
 
   useFrame(({ clock }) => {
     const t = scroll.offset
-    const visible = t > 0.54 && t < 0.63
+    const visible = t > 0.5 && t < 0.5714
 
     refs.current.forEach((light, i) => {
       if (!light) return

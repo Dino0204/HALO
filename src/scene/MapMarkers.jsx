@@ -5,8 +5,8 @@ import * as THREE from 'three'
 import { cityVisualPoint } from '../utils/gwangjuCityScale'
 
 const GEO_URL = '/data/provinces-geo-simple.json'
-const CITY_TRANSITION_START = 0.36
-const FINAL_MAP_REVEAL_START = 0.9
+const CITY_TRANSITION_START = 0.2857
+const FINAL_MAP_REVEAL_START = 0.9286
 
 const CITIES = [
   { name: '서울', x: -10, z: -26 },
@@ -104,7 +104,7 @@ function GwangjuBoundary() {
     const opacity = 0.82 + Math.sin(clock.elapsedTime * 3) * 0.12
 
     if (mapRef.current) {
-      mapRef.current.visible = t >= 0.27 && t < CITY_TRANSITION_START
+      mapRef.current.visible = t >= 0.2143 && t < CITY_TRANSITION_START
       mapRef.current.children.forEach((line) => {
         line.material.opacity = opacity
       })
@@ -151,8 +151,8 @@ export default function MapMarkers() {
   useFrame(() => {
     if (!groupRef.current) return
     const t = scroll.offset
-    // Visible in scenes 00–02 (t < 0.27) and scene 07 (0.63–0.72)
-    const visible = t < 0.27 || (t >= 0.63 && t < 0.72)
+    // Visible in scenes 00–02 (t < 0.2143) and scene 09 봉쇄 (0.6429–0.7143)
+    const visible = t < 0.2143 || (t >= 0.6429 && t < 0.7143)
     groupRef.current.visible = visible
   })
 

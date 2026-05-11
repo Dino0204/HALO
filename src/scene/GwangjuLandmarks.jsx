@@ -4,7 +4,7 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
-const FINAL_MAP_REVEAL_START = 0.9
+const FINAL_MAP_REVEAL_START = 0.9286
 
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
@@ -31,31 +31,6 @@ function CnuGate() {
         <boxGeometry args={[5.4, 0.04, 2.4]} />
         <meshStandardMaterial color="#6e6a5c" roughness={0.9} />
       </mesh>
-    </group>
-  )
-}
-
-function JeonilBuilding() {
-  const { x, z } = GWANGJU_LANDMARKS.jeonilBuilding
-
-  return (
-    <group position={[x, 0, z]} rotation={[0, THREE.MathUtils.degToRad(6), 0]}>
-      <mesh position={[0, 1.65, 0]}>
-        <boxGeometry args={[2.2, 3.3, 1.15]} />
-        <meshStandardMaterial color="#b49a78" roughness={0.62} />
-      </mesh>
-      <mesh position={[0, 1.68, -0.61]}>
-        <boxGeometry args={[2.05, 2.8, 0.06]} />
-        <meshStandardMaterial color="#6d786f" roughness={0.5} />
-      </mesh>
-      {[-0.68, 0, 0.68].map((xOffset) =>
-        [0.65, 1.2, 1.75, 2.3, 2.85].map((yOffset) => (
-          <mesh key={`${xOffset}-${yOffset}`} position={[xOffset, yOffset, -0.66]}>
-            <boxGeometry args={[0.34, 0.16, 0.04]} />
-            <meshStandardMaterial color="#222522" roughness={0.35} />
-          </mesh>
-        ))
-      )}
     </group>
   )
 }
@@ -89,9 +64,9 @@ export default function GwangjuLandmarks() {
 
   useFrame(() => {
     const t = scroll.offset
-    const cnuVisible = (t > 0.4 && t < 0.535) || t >= FINAL_MAP_REVEAL_START
+    const cnuVisible = (t > 0.32 && t < 0.5) || t >= FINAL_MAP_REVEAL_START
     const downtownVisible =
-      (t >= 0.54 && t < 0.63) || (t > 0.72 && t < 0.92) || t >= FINAL_MAP_REVEAL_START
+      (t >= 0.5 && t < 0.6429) || (t > 0.7857 && t < 0.9286) || t >= FINAL_MAP_REVEAL_START
 
     if (cnuRef.current) cnuRef.current.visible = cnuVisible
     if (downtownRef.current) downtownRef.current.visible = downtownVisible
@@ -104,7 +79,6 @@ export default function GwangjuLandmarks() {
       </group>
       <group ref={downtownRef} visible={false}>
         <GeumnamroMarker />
-        <JeonilBuilding />
       </group>
     </>
   )
