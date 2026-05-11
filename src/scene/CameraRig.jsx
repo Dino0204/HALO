@@ -23,15 +23,15 @@ const SCENE_RANGES = [
   [0.9286, 1.0001], // 13 기억/묘지
 ]
 
-const { cnuGate, geumnamroPark, jeonilBuilding } = GWANGJU_LANDMARKS
+const { cnuGate, geumnamroPark, jeonilBuilding, provincialOffice } = GWANGJU_LANDMARKS
 const GEO_URL = '/data/provinces-geo-simple.json'
 
 const CNU_POS = { x: cnuGate.x - 2.2, z: cnuGate.z + 7.5 }
 const CNU_TGT = { x: cnuGate.x, z: cnuGate.z }
 const GEUMNAMRO_POS = { x: geumnamroPark.x - 3.2, z: geumnamroPark.z + 8.5 }
 const GEUMNAMRO_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
-const OFFICE_POS = { x: jeonilBuilding.x - 4.5, z: jeonilBuilding.z + 9 }
-const OFFICE_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
+const OFFICE_POS = { x: provincialOffice.x - 6, z: provincialOffice.z + 12 }
+const OFFICE_TGT = { x: provincialOffice.x, z: provincialOffice.z }
 const MAP_CENTER = { x: 0, z: 4 }
 const GWANGJU_MAP_FALLBACK = { x: -13, z: 32 }
 const FINAL_CITY_VIEW = { x: GWANGJU_CITY_CENTER.x - 10, z: GWANGJU_CITY_CENTER.z + 4 }

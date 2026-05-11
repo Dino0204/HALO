@@ -36,4 +36,5 @@ export const GWANGJU_LANDMARKS = {
   cnuGate: landmarkPoint(126.904512, 35.1731412),
   geumnamroPark: landmarkPoint(126.9154925, 35.1497266),
   jeonilBuilding: landmarkPoint(126.9188, 35.14838),
+  provincialOffice: landmarkPoint(126.9194774, 35.1446366),
 }

@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -11,7 +11,7 @@ const BUILDING_POS = {
   y: 0,
   z: GWANGJU_LANDMARKS.jeonilBuilding.z,
 }
-const BUILDING_MODEL_SCALE = 0.05 
+const BUILDING_MODEL_SCALE = 0.05
 const BULLET_COUNT = 245
 
 function seededRandom(seed) {
@@ -56,10 +56,10 @@ function BulletHoles() {
   const meshRef = useRef()
   const scroll = useScroll()
 
-  const { count } = useMemo(() => {
+  const matrices = useMemo(() => {
     const rng = seededRandom(245)
     const dummy = new THREE.Object3D()
-    if (!meshRef.current) return { count: BULLET_COUNT }
+    const items = []
     for (let i = 0; i < BULLET_COUNT; i++) {
       dummy.position.set(
         BUILDING_POS.x + (rng() - 0.5) * 4 * BUILDING_MODEL_SCALE,
@@ -67,11 +67,18 @@ function BulletHoles() {
         BUILDING_POS.z + 1.2 * BUILDING_MODEL_SCALE + rng() * 0.1
       )
       dummy.updateMatrix()
-      meshRef.current.setMatrixAt(i, dummy.matrix)
+      items.push(dummy.matrix.clone())
     }
-    meshRef.current.instanceMatrix.needsUpdate = true
-    return { count: BULLET_COUNT }
+    return items
   }, [])
+
+  useEffect(() => {
+    if (!meshRef.current) return
+    matrices.forEach((matrix, i) => {
+      meshRef.current.setMatrixAt(i, matrix)
+    })
+    meshRef.current.instanceMatrix.needsUpdate = true
+  }, [matrices])
 
   useFrame(() => {
     if (!meshRef.current) return
@@ -88,7 +95,7 @@ function BulletHoles() {
   })
 
   return (
-    <instancedMesh ref={meshRef} args={[null, null, count]}>
+    <instancedMesh ref={meshRef} args={[null, null, BULLET_COUNT]}>
       <sphereGeometry args={[0.08, 6, 6]} />
       <meshBasicMaterial color="#ff3333" transparent opacity={0} />
     </instancedMesh>

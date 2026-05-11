@@ -1,9 +1,11 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useScroll } from '@react-three/drei'
+import { useGLTF, useScroll } from '@react-three/drei'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
-const OFFICE_POS = GWANGJU_LANDMARKS.jeonilBuilding
+const OFFICE_POS = GWANGJU_LANDMARKS.provincialOffice
+const OFFICE_MODEL_URL = '/models/former-jeonnam-provincial-office.glb'
+const OFFICE_MODEL_SCALE = 0.08
 const VEHICLE_START_Z = OFFICE_POS.z + 34
 
 export default function ProvincialOffice() {
@@ -12,6 +14,7 @@ export default function ProvincialOffice() {
     v2 = useRef(),
     v3 = useRef()
   const scroll = useScroll()
+  const { scene } = useGLTF(OFFICE_MODEL_URL)
 
   useFrame(({ clock }) => {
     const t = scroll.offset
@@ -29,25 +32,12 @@ export default function ProvincialOffice() {
 
   return (
     <group ref={groupRef}>
-      {/* Provincial office building */}
-      <mesh position={[OFFICE_POS.x, 2, OFFICE_POS.z]}>
-        <boxGeometry args={[10, 4, 6]} />
-        <meshStandardMaterial color="#1a1a1a" />
-      </mesh>
-      {/* Windows */}
-      {Array.from({ length: 12 }).map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            OFFICE_POS.x - 3.6 + (i % 6) * 1.45,
-            1.5 + Math.floor(i / 6) * 1.25,
-            OFFICE_POS.z - 3.05,
-          ]}
-        >
-          <planeGeometry args={[0.65, 0.65]} />
-          <meshBasicMaterial color="#ffffff" opacity={0.3} transparent />
-        </mesh>
-      ))}
+      <primitive
+        object={scene}
+        position={[OFFICE_POS.x, 0, OFFICE_POS.z]}
+        rotation={[0, Math.PI, 0]}
+        scale={OFFICE_MODEL_SCALE}
+      />
       {/* Armored vehicles */}
       <mesh ref={v1} position={[OFFICE_POS.x, 0.55, VEHICLE_START_Z]}>
         <boxGeometry args={[1.8, 1.1, 3.0]} />
@@ -64,3 +54,5 @@ export default function ProvincialOffice() {
     </group>
   )
 }
+
+useGLTF.preload(OFFICE_MODEL_URL)
