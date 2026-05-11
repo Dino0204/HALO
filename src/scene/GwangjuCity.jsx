@@ -4,6 +4,7 @@ import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import {
   CITY_HEIGHT_SCALE,
+  GWANGJU_LANDMARKS,
   MIN_BUILDING_SIZE,
   cityVisualBbox,
 } from '../utils/gwangjuCityScale'
@@ -21,6 +22,11 @@ const BUILDING_COLORS = {
   industrial: new THREE.Color('#4d4d45'),
   default: new THREE.Color('#666666'),
 }
+const LANDMARK_CLEAR_ZONES = [
+  { center: GWANGJU_LANDMARKS.cnuGate, halfX: 3.2, halfZ: 2.4 },
+  { center: GWANGJU_LANDMARKS.geumnamroPark, halfX: 1.4, halfZ: 1.4 },
+  { center: GWANGJU_LANDMARKS.jeonilBuilding, halfX: 2.2, halfZ: 1.7 },
+]
 
 function isCitySceneVisible(t) {
   return (t > CITY_VISIBLE_START && t < 0.63) || (t > 0.72 && t < CITY_VISIBLE_END)
@@ -54,13 +60,28 @@ function getBuildingColor(type = '') {
   return BUILDING_COLORS.default
 }
 
+function intersectsLandmarkClearZone([minX, minZ, maxX, maxZ]) {
+  return LANDMARK_CLEAR_ZONES.some(({ center, halfX, halfZ }) => {
+    return (
+      maxX >= center.x - halfX &&
+      minX <= center.x + halfX &&
+      maxZ >= center.z - halfZ &&
+      minZ <= center.z + halfZ
+    )
+  })
+}
+
 function BuildingChunk({ chunk, name }) {
   const meshRef = useRef()
 
   const instances = useMemo(() => {
     const dummy = new THREE.Object3D()
-    return chunk.features.map((feature) => {
+    return chunk.features.flatMap((feature) => {
       const [minX, minZ, maxX, maxZ] = cityVisualBbox(feature.properties.bbox)
+      if (intersectsLandmarkClearZone([minX, minZ, maxX, maxZ])) {
+        return []
+      }
+
       const height = feature.properties.height * CITY_HEIGHT_SCALE
       const width = Math.max(MIN_BUILDING_SIZE, maxX - minX)
       const depth = Math.max(MIN_BUILDING_SIZE, maxZ - minZ)

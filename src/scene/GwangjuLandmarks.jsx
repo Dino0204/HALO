@@ -1,31 +1,8 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Html, useScroll } from '@react-three/drei'
+import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
-
-function LandmarkLabel({ children, position }) {
-  return (
-    <Html center distanceFactor={16} position={position} transform sprite>
-      <div
-        style={{
-          background: 'rgba(18, 17, 15, 0.82)',
-          border: '1px solid rgba(255, 255, 255, 0.52)',
-          borderRadius: 4,
-          color: '#f7efe2',
-          fontSize: 12,
-          fontWeight: 700,
-          lineHeight: '16px',
-          padding: '3px 7px',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {children}
-      </div>
-    </Html>
-  )
-}
 
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
@@ -52,7 +29,6 @@ function CnuGate() {
         <boxGeometry args={[5.4, 0.04, 2.4]} />
         <meshStandardMaterial color="#6e6a5c" roughness={0.9} />
       </mesh>
-      <LandmarkLabel position={[0, 2.45, 0]}>전남대 정문</LandmarkLabel>
     </group>
   )
 }
@@ -78,7 +54,6 @@ function JeonilBuilding() {
           </mesh>
         )),
       )}
-      <LandmarkLabel position={[0, 3.9, 0]}>전일빌딩</LandmarkLabel>
     </group>
   )
 }
@@ -96,7 +71,6 @@ function GeumnamroMarker() {
         <boxGeometry args={[0.36, 0.05, 8.4]} />
         <meshStandardMaterial color="#f0d36d" emissive="#5f4611" emissiveIntensity={0.24} roughness={0.6} />
       </mesh>
-      <LandmarkLabel position={[0, 1.35, 0]}>금남로</LandmarkLabel>
     </group>
   )
 }
@@ -108,12 +82,11 @@ export default function GwangjuLandmarks() {
 
   useFrame(() => {
     const t = scroll.offset
-    if (cnuRef.current) {
-      cnuRef.current.visible = t > 0.42 && t < 0.55
-    }
-    if (downtownRef.current) {
-      downtownRef.current.visible = (t > 0.48 && t < 0.63) || (t > 0.72 && t < 0.92)
-    }
+    const cnuVisible = t > 0.42 && t < 0.535
+    const downtownVisible = (t >= 0.54 && t < 0.63) || (t > 0.72 && t < 0.92)
+
+    if (cnuRef.current) cnuRef.current.visible = cnuVisible
+    if (downtownRef.current) downtownRef.current.visible = downtownVisible
   })
 
   return (

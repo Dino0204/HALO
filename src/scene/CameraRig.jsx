@@ -49,6 +49,10 @@ const _viewDir = new THREE.Vector3()
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
 const MAP_UP = new THREE.Vector3(0, 0, -1)
 const MAP_UP_SINGULARITY_THRESHOLD = 0.92
+const CITY_CAMERA_RANGES = [
+  [0.42, 0.63],
+  [0.72, 0.92],
+]
 
 function lerpKeyframes(t) {
   let i = 0
@@ -69,7 +73,16 @@ function lerpKeyframes(t) {
   )
 }
 
-function applyStableCameraUp(camera) {
+function isCityCameraRange(t) {
+  return CITY_CAMERA_RANGES.some(([start, end]) => t >= start && t < end)
+}
+
+function applyStableCameraUp(camera, t) {
+  if (isCityCameraRange(t)) {
+    camera.up.copy(WORLD_UP)
+    return
+  }
+
   _viewDir.subVectors(_tgt, _pos).normalize()
   const mapUpIsSafe = Math.abs(_viewDir.dot(MAP_UP)) < MAP_UP_SINGULARITY_THRESHOLD
   camera.up.copy(mapUpIsSafe ? MAP_UP : WORLD_UP)
@@ -94,7 +107,7 @@ export default function CameraRig() {
 
     // Move camera
     lerpKeyframes(t)
-    applyStableCameraUp(camera)
+    applyStableCameraUp(camera, t)
     camera.position.copy(_pos)
     camera.lookAt(_tgt)
 
