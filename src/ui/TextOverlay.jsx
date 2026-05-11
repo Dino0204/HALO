@@ -15,12 +15,6 @@ const SCENE_CONTENT = [
     topLeftColor: '#ff6666',
     center: '전두환, 군사 반란을 일으키다.',
     bottom: '군부가 서울을 장악했다.\n국회는 봉쇄되고, 민주주의는 멈췄다.',
-    eventImage: {
-      src: '/event-cards/1212-coup-event.jpg',
-      date: '1979.12.12',
-      title: '군사 반란',
-      caption: '서울, 군부의 이동',
-    },
   },
   // Scene 02
   {
@@ -39,24 +33,12 @@ const SCENE_CONTENT = [
     topLeftColor: '#ff6666',
     bottom: '계엄군이 학생들을 향해 진압봉을 휘둘렀다.\n지나가던 시민도 예외가 아니었다.',
     bottomSmall: '전남대학교 정문 앞 — 오전 10시',
-    eventImage: {
-      src: '/event-cards/chonnam-gate-event.jpg',
-      date: '1980.05.18',
-      title: '전남대 정문',
-      caption: '시위대와 계엄군의 대치',
-    },
   },
   // Scene 05
   {
     topLeft: '1980.05.20 밤',
     center: '수백 대의 택시와 버스가\n금남로를 가득 메웠다.',
     bottom: '운전기사들이 자발적으로 나섰다.\n전조등이 밤을 밝혔다.',
-    eventImage: {
-      src: '/event-cards/geumnamno-bus-event.jpg',
-      date: '1980.05.20',
-      title: '금남로 차량 시위',
-      caption: '버스와 택시가 거리를 메우다',
-    },
   },
   // Scene 06 — 광주MBC 방화 (NEW)
   {
@@ -109,12 +91,6 @@ const SCENE_CONTENT = [
     stats: true,
     bottom: '이것은 공식적으로 인정된 숫자다.\n발표 기관에 따라 수치는 조금씩 다르며,\n모든 피해가 완전히 밝혀지지 않았다.',
     bottomSmall: '출처: 5·18 유공자 유족회 등 4개 단체 발표',
-    eventImage: {
-      src: '/event-cards/aftermath-casualties-event.jpg',
-      date: '1980.05.27',
-      title: '항쟁 직후',
-      caption: '남겨진 피해와 기록',
-    },
   },
   // Scene 13 — 기억 / 국립5.18민주묘지 (was Scene 10)
   {
@@ -425,24 +401,6 @@ export default function TextOverlay() {
                 </div>
               ))}
             </div>
-          )}
-
-          {sc.eventImage && (
-            <figure className={`event-card scene-${i}`}>
-              <div className="event-card__header">
-                <span className="event-card__date">{sc.eventImage.date}</span>
-                <strong>{sc.eventImage.title}</strong>
-              </div>
-              <div className="event-card__body">
-                <div className="event-card__image-frame">
-                  <img src={sc.eventImage.src} alt="" className="event-card__image" />
-                </div>
-                <figcaption className="event-card__caption">
-                  <p>{sc.eventImage.caption}</p>
-                  <span>사건 발생</span>
-                </figcaption>
-              </div>
-            </figure>
           )}
 
           {/* Bottom text */}
