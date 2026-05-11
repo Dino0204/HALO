@@ -1,0 +1,58 @@
+3D Model Asset License
+======================
+
+The .glb files in this directory are derived from the
+광주문화예술인문스토리플랫폼 (Gwangju Digital Humanities Story Platform),
+operated by the Academy of Korean Studies (한국학중앙연구원).
+
+Original source:
+  https://dh.aks.ac.kr/~gwangju/wiki/index.php/3D_어셋_목록
+
+License: Creative Commons Attribution-ShareAlike 4.0 International
+  https://creativecommons.org/licenses/by-sa/4.0/
+
+You are free to:
+  * Share — copy and redistribute the material in any medium or format
+  * Adapt — remix, transform, and build upon the material for any purpose,
+            even commercially
+
+Under the following terms:
+  * Attribution — You must give appropriate credit, provide a link to the
+                  license, and indicate if changes were made.
+  * ShareAlike — If you remix, transform, or build upon the material,
+                 you must distribute your contributions under the same
+                 license as the original.
+
+-------------------------------------------------------------------------------
+File-by-file attribution
+-------------------------------------------------------------------------------
+
+gwangju-mbc.glb
+  Original name: 옛_광주MBC (Former Gwangju MBC Building)
+  Source URL:    https://dh.aks.ac.kr/~gwangju/asset/2023/glb/24_Former_Gwangju_MBC_Building.glb
+  Wiki page:     https://dh.aks.ac.kr/~gwangju/wiki/index.php/옛_광주MBC
+
+jeonil-building.glb
+  Original name: 전일빌딩245 (Jeonil Building 245)
+  Source URL:    https://dh.aks.ac.kr/~gwangju/asset/2022/glb/10_Jeonil_Building.glb
+  Wiki page:     https://dh.aks.ac.kr/~gwangju/wiki/index.php/전일빌딩245
+
+gwangju-fountain.glb
+  Original name: 5.18민주광장_분수대 (Fountain in front of the Former Provincial Office)
+  Source URL:    https://dh.aks.ac.kr/~gwangju/asset/2023/glb/14_Fountain_in_Front_of_the_Former_Provincial_Office.glb
+  Wiki page:     https://dh.aks.ac.kr/~gwangju/wiki/index.php/5.18민주광장_분수대
+
+may18-cemetery.glb
+  Original name: 국립5.18민주묘지 (May 18th National Cemetery — Memorial Monument)
+  Source URL:    https://dh.aks.ac.kr/~gwangju/asset/2022/glb/02_Memorial_Monument_of_the_May_18th_National_Cemetery.glb
+  Wiki page:     https://dh.aks.ac.kr/~gwangju/wiki/index.php/국립5.18민주묘지
+
+cnu-main-building.glb
+  Original name: 전남대학교_용봉관 (Chonnam National University Main Building / Yongbong Hall)
+  Source URL:    https://dh.aks.ac.kr/~gwangju/asset/2022/glb/06_Chonnam_National_University_Main_Building.glb
+  Wiki page:     https://dh.aks.ac.kr/~gwangju/wiki/index.php/전남대학교_용봉관
+
+-------------------------------------------------------------------------------
+
+This project (5.18 Interactive Web Experience) is therefore also distributed
+under CC BY-SA 4.0, in accordance with the ShareAlike requirement.
