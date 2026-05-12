@@ -101,8 +101,19 @@ function intersectsLandmarkClearZone([minX, minZ, maxX, maxZ]) {
 }
 
 function CityGround() {
+  const groundRef = useRef()
+  const scroll = useScroll()
+
+  useFrame(() => {
+    if (!groundRef.current) return
+    const t = scroll.offset
+    groundRef.current.visible =
+      (t > CITY_VISIBLE_START && t < 0.6429) || (t > 0.7143 && t < CITY_VISIBLE_END)
+  })
+
   return (
     <mesh
+      ref={groundRef}
       position={[CITY_GROUND_CENTER.x, -0.02, CITY_GROUND_CENTER.z]}
       rotation={[-Math.PI / 2, 0, 0]}
     >
