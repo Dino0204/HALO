@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useSceneStore } from '../store/sceneStore'
 import { scrollStore } from '../store/scrollStore'
+import { usePlayStore } from '../store/playStore'
 
 const FINAL_MESSAGE_START = 0.999
 const FINAL_MAP_TITLE_START = 0.9286
@@ -180,10 +181,9 @@ export default function TextOverlay() {
     const el = window._518scrollEl || document.querySelector('.hide-scrollbar')
     if (!el) return
 
-    const scrollSpeed = 6
     const step = () => {
       if (!isPressing.current) return
-      el.scrollTop += scrollSpeed
+      el.scrollTop += 10 * usePlayStore.getState().speed
       scrollInterval.current = requestAnimationFrame(step)
     }
     scrollInterval.current = requestAnimationFrame(step)

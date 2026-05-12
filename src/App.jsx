@@ -7,6 +7,7 @@ import TextOverlay from './ui/TextOverlay'
 import HUDTimeline from './ui/HUDTimeline'
 import HUDLocation from './ui/HUDLocation'
 import CustomScrollbar from './ui/CustomScrollbar'
+import AutoPlayButton from './ui/AutoPlayButton'
 import './App.css'
 
 const SCROLL_PAGES = 28
@@ -65,6 +66,7 @@ export default function App() {
       <HUDTimeline />
       <HUDLocation />
       <CustomScrollbar />
+      <AutoPlayButton />
       <LoadingScreen />
     </>
   )
