@@ -1,3 +1,95 @@
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.7s ease,
+    visibility 0s linear 0s;
+  color: #f4efe8;
+  font-family:
+    Apple SD Gothic Neo,
+    Malgun Gothic,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    sans-serif;
+}
+
+.loading-screen.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.7s ease,
+    visibility 0s linear 0.7s;
+}
+
+.loading-logo {
+  width: min(30vw, 180px);
+  max-height: 26vh;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.55));
+}
+
+.loading-content {
+  width: min(84vw, 460px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.loading-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 124px;
+  justify-content: center;
+}
+
+.loading-title {
+  font-size: clamp(42px, 9vw, 68px);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.loading-description {
+  font-size: clamp(15px, 3.5vw, 18px);
+  line-height: 1.4;
+  color: rgba(244, 239, 232, 0.72);
+}
+
+.loading-status {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(244, 239, 232, 0.8);
+}
+
+.loading-progress {
+  width: min(100%, 280px);
+  height: 2px;
+  overflow: hidden;
+  background: rgba(244, 239, 232, 0.18);
+}
+
+.loading-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #d5442f;
+  transform-origin: left center;
+  transition: transform 0.25s ease;
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
