@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useSceneStore } from '../store/sceneStore'
+import { scrollStore } from '../store/scrollStore'
+
+const FINAL_MESSAGE_START = 0.999
+const FINAL_MAP_TITLE_START = 0.9286
+const FINAL_MAP_TITLE_END = 0.9857
 
 const SCENE_CONTENT = [
   // Scene 00
@@ -104,6 +109,7 @@ export default function TextOverlay() {
   const containerRef = useRef()
   const prevScene = useRef(-1)
   const [showHint, setShowHint] = useState(true)
+  const [scrollOffset, setScrollOffset] = useState(0)
 
   // Mouse interaction for Gwangju close-up (Scene 03–06)
   useEffect(() => {
@@ -134,6 +140,18 @@ export default function TextOverlay() {
       }
     })
   }, [currentScene])
+
+  useEffect(() => {
+    let frameId
+
+    const syncOffset = () => {
+      setScrollOffset(scrollStore.offset)
+      frameId = requestAnimationFrame(syncOffset)
+    }
+
+    frameId = requestAnimationFrame(syncOffset)
+    return () => cancelAnimationFrame(frameId)
+  }, [])
 
   const font = "'Noto Serif KR', serif"
 
@@ -478,7 +496,7 @@ export default function TextOverlay() {
           )}
 
           {/* Final message (Scene 10) */}
-          {sc.finalMessage && (
+          {sc.finalMessage && scrollOffset >= FINAL_MESSAGE_START && (
             <div
               style={{
                 position: 'absolute',
@@ -493,7 +511,7 @@ export default function TextOverlay() {
               {sc.finalMessage}
             </div>
           )}
-          {sc.finalSub && (
+          {sc.finalSub && scrollOffset >= FINAL_MESSAGE_START && (
             <div
               style={{
                 position: 'absolute',
@@ -510,6 +528,23 @@ export default function TextOverlay() {
           )}
         </div>
       ))}
+
+      {scrollOffset >= FINAL_MAP_TITLE_START && scrollOffset < FINAL_MAP_TITLE_END && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
+            letterSpacing: '0.1em',
+            textAlign: 'center',
+            textShadow: '0 1px 8px rgba(0,0,0,0.85)',
+          }}
+        >
+          9일간의 기록
+        </div>
+      )}
 
       {/* Attribution footer — always visible */}
       <div
