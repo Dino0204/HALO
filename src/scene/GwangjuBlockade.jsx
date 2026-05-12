@@ -70,15 +70,18 @@ export default function GwangjuBlockade() {
   }, [geoJson])
 
   useFrame(() => {
+    const material = materialRef.current
+    if (!material?.uniforms?.uOpacity) return
+
     const t = scroll.offset
     const visible = t > 0.62 && t < 0.72
     if (meshRef.current) meshRef.current.visible = visible
     if (visible) {
       const fadeIn = THREE.MathUtils.smoothstep(t, 0.65, 0.68)
       const fadeOut = 1 - THREE.MathUtils.smoothstep(t, 0.69, 0.71)
-      materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut
+      material.uniforms.uOpacity.value = fadeIn * fadeOut
     } else {
-      materialRef.current.uniforms.uOpacity.value = 0
+      material.uniforms.uOpacity.value = 0
     }
   })
 
