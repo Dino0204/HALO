@@ -94,7 +94,7 @@ const SCENE_CONTENT = [
   },
   // Scene 13 — 기억 / 국립5.18민주묘지 (was Scene 10)
   {
-    finalMessage: '우리가 기억합니다',
+    finalMessage: '기억하겠습니다',
     finalSub: '5·18민주화운동',
     bottomLeft: '1980년 5월 18일 — 5월 27일, 광주',
   },
