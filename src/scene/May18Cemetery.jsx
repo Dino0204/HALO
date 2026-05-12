@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll, useGLTF } from '@react-three/drei'
 import { CEMETERY_POS } from './landmarkPositions'
 
-const SCROLL_START = 0.9643
+const SCROLL_START = 0.9857
 const CEMETERY_MODEL_SCALE = 0.05
 const PARTICLE_SPREAD = 4.2
 const PARTICLE_HEIGHT = 1.8

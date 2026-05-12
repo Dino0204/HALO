@@ -12,7 +12,10 @@ import {
 import { CEMETERY_POS, MBC_POS } from './landmarkPositions'
 
 const FINAL_MAP_REVEAL_START = 0.9286
-const FINAL_MAP_LABEL_END = 0.9643
+const FINAL_MAP_FULL_VIEW_START = 0.9643
+const FINAL_MAP_LABEL_END = 0.9857
+const FINAL_LABEL_MIN_SCALE = 0.9
+const FINAL_LABEL_MAX_SCALE = 3.8
 const CNU_GATE_MARKER_SCALE = 0.3
 const GEUMNAMRO_ALERT_START = 0.5
 const GEUMNAMRO_ALERT_END = 0.6429
@@ -199,8 +202,19 @@ function GeumnamroPulse() {
 }
 
 function FinalMapLabel({ label, point, textOffset }) {
+  const groupRef = useRef()
+  const scroll = useScroll()
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    const progress = THREE.MathUtils.smoothstep(scroll.offset, FINAL_MAP_REVEAL_START, FINAL_MAP_FULL_VIEW_START)
+    groupRef.current.scale.setScalar(
+      THREE.MathUtils.lerp(FINAL_LABEL_MIN_SCALE, FINAL_LABEL_MAX_SCALE, progress)
+    )
+  })
+
   return (
-    <group position={[point.x, 0.34, point.z]}>
+    <group ref={groupRef} position={[point.x, 0.34, point.z]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.38, 0.58, 48]} />
         <meshBasicMaterial
