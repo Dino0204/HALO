@@ -12,7 +12,8 @@ const BUILDING_POS = {
   z: GWANGJU_LANDMARKS.jeonilBuilding.z,
 }
 const BUILDING_MODEL_SCALE = 0.05
-const BULLET_COUNT = 245
+const BULLET_COUNT = 36
+const TRACER_COUNT = 12
 const HELICOPTER_MODEL_URL = '/models/bell_huey_helicopter.glb'
 const HELICOPTER_MODEL_SCALE = 0.42
 
@@ -111,6 +112,82 @@ function BulletHoles() {
   )
 }
 
+function BulletTracers() {
+  const meshRef = useRef()
+  const scroll = useScroll()
+
+  const tracers = useMemo(() => {
+    const rng = seededRandom(518)
+    return Array.from({ length: TRACER_COUNT }, (_, index) => ({
+      offset: index / TRACER_COUNT,
+      side: (rng() - 0.5) * 1.4,
+      lift: (rng() - 0.5) * 0.6,
+      target: new THREE.Vector3(
+        BUILDING_POS.x + (rng() - 0.5) * 3.4 * BUILDING_MODEL_SCALE,
+        1 + rng() * 3.4,
+        BUILDING_POS.z + 1.25 * BUILDING_MODEL_SCALE + rng() * 0.12
+      ),
+    }))
+  }, [])
+
+  useFrame(() => {
+    if (!meshRef.current) return
+    const t = scroll.offset
+    const visible = t >= SCROLL_START && t < SCROLL_END
+    meshRef.current.visible = visible
+    if (!visible) return
+
+    const local = (t - SCROLL_START) / (SCROLL_END - SCROLL_START)
+    const heliStart = new THREE.Vector3(
+      BUILDING_POS.x + THREE.MathUtils.lerp(-14, 14, local),
+      5.55,
+      BUILDING_POS.z + 1.15
+    )
+    const dummy = new THREE.Object3D()
+    const axis = new THREE.Vector3(0, 1, 0)
+    const streamActive = local > 0.06 && local < 0.9
+
+    tracers.forEach((tracer, i) => {
+      const shotProgress = (local * 1.55 + tracer.offset) % 1
+      const start = heliStart.clone().add(new THREE.Vector3(tracer.side, tracer.lift, 0))
+      const end = tracer.target
+      const direction = end.clone().sub(start)
+      const distance = direction.length()
+      const travel = THREE.MathUtils.smoothstep(shotProgress, 0, 1)
+      const position = start.lerp(end, travel)
+      const active = streamActive && shotProgress > 0.08 && shotProgress < 0.92
+
+      dummy.position.copy(position)
+      dummy.quaternion.setFromUnitVectors(axis, direction.normalize())
+      if (active) {
+        dummy.scale.set(1, THREE.MathUtils.clamp(distance * 0.1, 1.2, 3.4), 1)
+      } else {
+        dummy.scale.setScalar(0)
+      }
+      dummy.updateMatrix()
+      meshRef.current.setMatrixAt(i, dummy.matrix)
+    })
+
+    meshRef.current.instanceMatrix.needsUpdate = true
+    if (meshRef.current.material) {
+      meshRef.current.material.opacity = 0.95
+    }
+  })
+
+  return (
+    <instancedMesh ref={meshRef} args={[null, null, TRACER_COUNT]} visible={false}>
+      <cylinderGeometry args={[0.055, 0.018, 1, 8]} />
+      <meshBasicMaterial
+        color="#ffd76a"
+        transparent
+        opacity={0}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </instancedMesh>
+  )
+}
+
 export default function JeonilBuilding() {
   const groupRef = useRef()
   const scroll = useScroll()
@@ -130,6 +207,7 @@ export default function JeonilBuilding() {
         scale={BUILDING_MODEL_SCALE}
       />
       <Helicopter />
+      <BulletTracers />
       <BulletHoles />
     </group>
   )
