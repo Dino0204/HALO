@@ -4,6 +4,10 @@ import { useScroll, useGLTF } from '@react-three/drei'
 import { CEMETERY_POS } from './landmarkPositions'
 
 const SCROLL_START = 0.9643
+const CEMETERY_MODEL_SCALE = 0.05
+const PARTICLE_SPREAD = 4.2
+const PARTICLE_HEIGHT = 1.8
+const PARTICLE_SIZE = 0.04
 
 function seededRandom(seed) {
   let value = seed
@@ -21,9 +25,9 @@ function MemorialParticles() {
     const arr = new Float32Array(COUNT * 3)
     const rng = seededRandom(518)
     for (let i = 0; i < COUNT; i++) {
-      arr[i * 3] = CEMETERY_POS.x + (rng() - 0.5) * 14
-      arr[i * 3 + 1] = CEMETERY_POS.y + 0.5 + rng() * 6
-      arr[i * 3 + 2] = CEMETERY_POS.z + (rng() - 0.5) * 14
+      arr[i * 3] = CEMETERY_POS.x + (rng() - 0.5) * PARTICLE_SPREAD
+      arr[i * 3 + 1] = CEMETERY_POS.y + 0.5 + rng() * PARTICLE_HEIGHT
+      arr[i * 3 + 2] = CEMETERY_POS.z + (rng() - 0.5) * PARTICLE_SPREAD
     }
     return { base: arr, positions: arr.slice() }
   }, [])
@@ -36,7 +40,7 @@ function MemorialParticles() {
     const pos = ref.current.geometry.attributes.position.array
     const speed = clock.elapsedTime * 0.4
     for (let i = 0; i < COUNT; i++) {
-      pos[i * 3 + 1] = base[i * 3 + 1] + ((speed + i * 0.1) % 8)
+      pos[i * 3 + 1] = base[i * 3 + 1] + ((speed + i * 0.1) % 2.4)
     }
     ref.current.geometry.attributes.position.needsUpdate = true
   })
@@ -47,7 +51,7 @@ function MemorialParticles() {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.12}
+        size={PARTICLE_SIZE}
         color="#ffffff"
         transparent
         opacity={0.6}
@@ -75,7 +79,7 @@ export default function May18Cemetery() {
       <primitive
         object={scene}
         position={[CEMETERY_POS.x, CEMETERY_POS.y, CEMETERY_POS.z]}
-        scale={1}
+        scale={CEMETERY_MODEL_SCALE}
       />
       <directionalLight
         ref={lightRef}

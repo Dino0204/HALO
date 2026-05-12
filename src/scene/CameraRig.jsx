@@ -42,11 +42,13 @@ const JEONIL_CAM_POS = { x: jeonilBuilding.x, z: jeonilBuilding.z + 18 }
 const JEONIL_CAM_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
 const SQUARE_CAM_POS = { x: jeonilBuilding.x, z: jeonilBuilding.z + 7.7 }
 const SQUARE_CAM_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z + 4 }
-const CEMETERY_CAM_POS = { x: CEMETERY_POS.x + 15, z: CEMETERY_POS.z + 25 }
+const CEMETERY_CAM_POS = { x: CEMETERY_POS.x + 4.5, z: CEMETERY_POS.z + 7.5 }
 const CEMETERY_CAM_TGT = { x: CEMETERY_POS.x, z: CEMETERY_POS.z }
 
 const _pos = new THREE.Vector3()
 const _tgt = new THREE.Vector3()
+const _smoothedPos = new THREE.Vector3()
+const _smoothedTgt = new THREE.Vector3()
 const _viewDir = new THREE.Vector3()
 const _desiredUp = new THREE.Vector3()
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
@@ -110,7 +112,7 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.9286, OFFICE_POS.x - 0.9, 0.7, OFFICE_POS.z + 1.4, OFFICE_TGT.x, 0.2, OFFICE_TGT.z],
     [0.95, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
     [0.9643, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
-    [1.0, CEMETERY_CAM_POS.x, 8, CEMETERY_CAM_POS.z, CEMETERY_CAM_TGT.x, 2, CEMETERY_CAM_TGT.z],
+    [1.0, CEMETERY_CAM_POS.x, 2.6, CEMETERY_CAM_POS.z, CEMETERY_CAM_TGT.x, 0.7, CEMETERY_CAM_TGT.z],
   ]
 }
 
@@ -159,6 +161,7 @@ export default function CameraRig() {
   const scroll = useScroll()
   const mouseRef = useRef({ x: 0, y: 0 })
   const prevSceneRef = useRef(-1)
+  const cameraInitializedRef = useRef(false)
   const keyframesRef = useRef(buildKeyframes(GWANGJU_MAP_FALLBACK))
 
   useEffect(() => {
@@ -188,7 +191,7 @@ export default function CameraRig() {
     }
   }, [])
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera }, delta) => {
     window._518mouseRef = mouseRef
     const t = scroll.offset
 
@@ -202,9 +205,26 @@ export default function CameraRig() {
 
     // Move camera
     lerpKeyframes(t, keyframesRef.current)
+
+    if (!cameraInitializedRef.current) {
+      _smoothedPos.copy(_pos)
+      _smoothedTgt.copy(_tgt)
+      cameraInitializedRef.current = true
+    }
+
+    const damping = t >= 0.9286 ? 1.6 : 8
+    _smoothedPos.x = THREE.MathUtils.damp(_smoothedPos.x, _pos.x, damping, delta)
+    _smoothedPos.y = THREE.MathUtils.damp(_smoothedPos.y, _pos.y, damping, delta)
+    _smoothedPos.z = THREE.MathUtils.damp(_smoothedPos.z, _pos.z, damping, delta)
+    _smoothedTgt.x = THREE.MathUtils.damp(_smoothedTgt.x, _tgt.x, damping, delta)
+    _smoothedTgt.y = THREE.MathUtils.damp(_smoothedTgt.y, _tgt.y, damping, delta)
+    _smoothedTgt.z = THREE.MathUtils.damp(_smoothedTgt.z, _tgt.z, damping, delta)
+
+    _pos.copy(_smoothedPos)
+    _tgt.copy(_smoothedTgt)
     applyStableCameraUp(camera, t)
-    camera.position.copy(_pos)
-    camera.lookAt(_tgt)
+    camera.position.copy(_smoothedPos)
+    camera.lookAt(_smoothedTgt)
 
     // Mouse offset only after the map-only Gwangju emphasis has finished.
     if (t > CNU_DESCENT_END && t < 0.5) {

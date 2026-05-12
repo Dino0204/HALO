@@ -14,7 +14,7 @@ function lngLatToMapPoint(lng, lat) {
   }
 }
 
-function landmarkPoint(lng, lat) {
+export function landmarkPoint(lng, lat) {
   const point = lngLatToMapPoint(lng, lat)
   return cityVisualPoint(point.x, point.z)
 }
