@@ -38,8 +38,8 @@ const GEUMNAMRO_WIDE_POS = {
   x: GEUMNAMRO_WIDE_TGT.x - 7.5,
   z: GEUMNAMRO_WIDE_TGT.z + 13.5,
 }
-const OFFICE_POS = { x: provincialOffice.x - 2.1, z: provincialOffice.z + 4.2 }
-const OFFICE_TGT = { x: provincialOffice.x, z: provincialOffice.z }
+const OFFICE_POS = { x: provincialOffice.x - 6.4, z: provincialOffice.z + 9.6 }
+const OFFICE_TGT = { x: provincialOffice.x + 0.1, z: provincialOffice.z + 3.2 }
 const MAP_CENTER = { x: 0, z: 4 }
 const GWANGJU_MAP_FALLBACK = { x: -13, z: 32 }
 const FINAL_CITY_VIEW = { x: GWANGJU_CITY_CENTER.x - 10, z: GWANGJU_CITY_CENTER.z + 4 }
@@ -133,8 +133,8 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.6429, JEONIL_CAM_POS.x, 4, JEONIL_CAM_POS.z, JEONIL_CAM_TGT.x, 12, JEONIL_CAM_TGT.z],
     [0.7143, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.7857, SQUARE_CAM_POS.x, 4.2, SQUARE_CAM_POS.z, SQUARE_CAM_TGT.x, 0.45, SQUARE_CAM_TGT.z],
-    [0.8571, OFFICE_POS.x, 0.85, OFFICE_POS.z, OFFICE_TGT.x, 0.25, OFFICE_TGT.z],
-    [0.9286, OFFICE_POS.x - 0.9, 0.7, OFFICE_POS.z + 1.4, OFFICE_TGT.x, 0.2, OFFICE_TGT.z],
+    [0.8571, OFFICE_POS.x, 2.4, OFFICE_POS.z, OFFICE_TGT.x, 0.65, OFFICE_TGT.z],
+    [0.9286, OFFICE_POS.x - 0.9, 1.7, OFFICE_POS.z + 1.4, OFFICE_TGT.x, 0.45, OFFICE_TGT.z],
     [0.9643, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
     [0.9857, FINAL_CITY_VIEW.x, 180, FINAL_CITY_VIEW.z, FINAL_CITY_VIEW.x, 0, FINAL_CITY_VIEW.z],
     [1.0, CEMETERY_CAM_POS.x, 2.6, CEMETERY_CAM_POS.z, CEMETERY_CAM_TGT.x, 0.7, CEMETERY_CAM_TGT.z],

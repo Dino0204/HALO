@@ -109,6 +109,7 @@ export default function TextOverlay() {
   const containerRef = useRef()
   const prevScene = useRef(-1)
   const [showHint, setShowHint] = useState(true)
+  const [isScrolling, setIsScrolling] = useState(false)
   const [scrollOffset, setScrollOffset] = useState(0)
 
   // Mouse interaction for Gwangju close-up (Scene 03–06)
@@ -143,14 +144,26 @@ export default function TextOverlay() {
 
   useEffect(() => {
     let frameId
+    let hideTimer
+    let prevOffset = scrollStore.offset
 
     const syncOffset = () => {
-      setScrollOffset(scrollStore.offset)
+      const nextOffset = scrollStore.offset
+      setScrollOffset(nextOffset)
+      if (Math.abs(nextOffset - prevOffset) > 0.00005) {
+        prevOffset = nextOffset
+        setIsScrolling(true)
+        clearTimeout(hideTimer)
+        hideTimer = setTimeout(() => setIsScrolling(false), 220)
+      }
       frameId = requestAnimationFrame(syncOffset)
     }
 
     frameId = requestAnimationFrame(syncOffset)
-    return () => cancelAnimationFrame(frameId)
+    return () => {
+      cancelAnimationFrame(frameId)
+      clearTimeout(hideTimer)
+    }
   }, [])
 
   const font = "'Noto Serif KR', serif"
@@ -238,10 +251,10 @@ export default function TextOverlay() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '0.8rem',
-          opacity: showHint ? 1 : 0,
+          opacity: showHint && !isScrolling ? 1 : 0,
           pointerEvents: 'none',
           transition: 'opacity 0.6s ease, visibility 0.6s',
-          visibility: showHint ? 'visible' : 'hidden',
+          visibility: showHint && !isScrolling ? 'visible' : 'hidden',
           animation: 'hintPulse 3s infinite ease-in-out',
         }}
       >

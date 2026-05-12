@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useGLTF, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import { cloneAsGrayscale } from '../utils/grayscaleModel'
 
 const SCROLL_START = 0.7857
 const SCROLL_END = 0.8571
@@ -40,6 +41,7 @@ export default function ProvincialOffice() {
     v3 = useRef()
   const scroll = useScroll()
   const { scene } = useGLTF(OFFICE_MODEL_URL)
+  const officeModel = useMemo(() => cloneAsGrayscale(scene), [scene])
 
   useFrame(() => {
     const t = scroll.offset
@@ -58,7 +60,7 @@ export default function ProvincialOffice() {
   return (
     <group ref={groupRef}>
       <primitive
-        object={scene}
+        object={officeModel}
         position={[OFFICE_POS.x, OFFICE_MODEL_Y_OFFSET, OFFICE_POS.z]}
         rotation={[0, Math.PI, 0]}
         scale={OFFICE_MODEL_SCALE}

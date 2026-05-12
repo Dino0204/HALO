@@ -2,6 +2,7 @@ import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, useGLTF } from '@react-three/drei'
 import { CEMETERY_POS } from './landmarkPositions'
+import { cloneAsGrayscale } from '../utils/grayscaleModel'
 
 const SCROLL_START = 0.9857
 const CEMETERY_MODEL_SCALE = 0.05
@@ -67,6 +68,7 @@ export default function May18Cemetery() {
   const lightRef = useRef()
   const scroll = useScroll()
   const { scene } = useGLTF('/models/may18-cemetery.glb')
+  const cemeteryModel = useMemo(() => cloneAsGrayscale(scene), [scene])
 
   useFrame(() => {
     if (!groupRef.current) return
@@ -77,7 +79,7 @@ export default function May18Cemetery() {
   return (
     <group ref={groupRef}>
       <primitive
-        object={scene}
+        object={cemeteryModel}
         position={[CEMETERY_POS.x, CEMETERY_POS.y, CEMETERY_POS.z]}
         scale={CEMETERY_MODEL_SCALE}
       />
