@@ -361,7 +361,7 @@ export default function TextOverlay() {
         </div>
       )}
 
-      <div className="pointer-events-none absolute right-6 bottom-4 max-w-[min(620px,calc(100vw-3rem))] text-right text-[0.65rem] leading-[1.6] text-[#554]">
+      <div className="-z-20 pointer-events-none absolute right-6 bottom-4 max-w-[min(620px,calc(100vw-3rem))] text-right text-[0.65rem] leading-[1.6] text-[#554]">
         지리 데이터: © OpenStreetMap contributors (ODbL)
         <br />
         역사 자료: 5·18기념재단, 5·18민주화운동기록관, 민주화운동기념사업회
