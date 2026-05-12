@@ -1,44 +1,41 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #f4efe8;
+  --color-bg: #0a0a0a;
+  --color-accent: #d5442f;
+  --font-serif: 'Noto Serif KR', serif;
+  --font-sans:
+    'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
 }
 
-*::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-html,
-body,
-#root,
-.hide-scrollbar {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-#root::-webkit-scrollbar,
-.hide-scrollbar::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
-  width: 0 !important;
-  height: 0 !important;
-}
+  html,
+  body,
+  #root {
+    width: 100vw;
+    height: 100vh;
+  }
 
-/* Global override for any potential scrollable containers */
-* {
-  scrollbar-width: none !important;
-}
-
-*::-webkit-scrollbar {
-  display: none !important;
-}
-
-#root {
-  width: 100vw;
-  height: 100vh;
+  body {
+    background: var(--color-bg);
+    overflow: hidden;
+  }
 }
