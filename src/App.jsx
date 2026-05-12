@@ -12,7 +12,7 @@ import './App.css'
 
 const SCROLL_PAGES = 28
 const MIN_LOADING_TIME = 1800
-const LOADING_LOGO_SRC = '/%E1%84%80%E1%85%A1%E1%86%BC%E1%84%92%E1%85%A1.png'
+const LOADING_LOGO_SRC = '/logo.png'
 
 function LoadingScreen() {
   const { active, progress } = useProgress()
