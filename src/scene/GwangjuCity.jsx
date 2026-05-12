@@ -17,6 +17,16 @@ const CITY_VISIBLE_END = 0.9286
 const CITY_PRELOAD_START = 0.2143
 const FINAL_MAP_REVEAL_START = 0.9286
 const LOAD_RADIUS = 70
+const CITY_GROUND_BBOX = cityVisualBbox([-16.8, 29.8, -9.5, 34.9])
+const CITY_GROUND_PADDING = 8
+const CITY_GROUND_CENTER = {
+  x: (CITY_GROUND_BBOX[0] + CITY_GROUND_BBOX[2]) / 2,
+  z: (CITY_GROUND_BBOX[1] + CITY_GROUND_BBOX[3]) / 2,
+}
+const CITY_GROUND_SIZE = {
+  x: CITY_GROUND_BBOX[2] - CITY_GROUND_BBOX[0] + CITY_GROUND_PADDING * 2,
+  z: CITY_GROUND_BBOX[3] - CITY_GROUND_BBOX[1] + CITY_GROUND_PADDING * 2,
+}
 const BUILDING_COLORS = {
   civic: new THREE.Color('#8f8270'),
   commercial: new THREE.Color('#8b8070'),
@@ -88,6 +98,18 @@ function intersectsLandmarkClearZone([minX, minZ, maxX, maxZ]) {
       minZ <= center.z + halfZ
     )
   })
+}
+
+function CityGround() {
+  return (
+    <mesh
+      position={[CITY_GROUND_CENTER.x, -0.02, CITY_GROUND_CENTER.z]}
+      rotation={[-Math.PI / 2, 0, 0]}
+    >
+      <planeGeometry args={[CITY_GROUND_SIZE.x, CITY_GROUND_SIZE.z]} />
+      <meshBasicMaterial color="#050505" />
+    </mesh>
+  )
 }
 
 function BuildingChunk({ chunk, name }) {
@@ -245,6 +267,7 @@ export default function GwangjuCity() {
 
   return (
     <group ref={groupRef} visible={false}>
+      <CityGround />
       {activeKeys.map((key) => {
         const chunk = loadedChunks[key]
         if (!chunk) return null
