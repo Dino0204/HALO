@@ -30,6 +30,14 @@ const CNU_POS = { x: cnuGate.x - 1.4, z: cnuGate.z + 4.8 }
 const CNU_TGT = { x: cnuGate.x, z: cnuGate.z }
 const GEUMNAMRO_POS = { x: geumnamroPark.x - 3.2, z: geumnamroPark.z + 8.5 }
 const GEUMNAMRO_TGT = { x: jeonilBuilding.x, z: jeonilBuilding.z }
+const GEUMNAMRO_WIDE_TGT = {
+  x: (geumnamroPark.x + jeonilBuilding.x) / 2,
+  z: (geumnamroPark.z + jeonilBuilding.z) / 2,
+}
+const GEUMNAMRO_WIDE_POS = {
+  x: GEUMNAMRO_WIDE_TGT.x - 7.5,
+  z: GEUMNAMRO_WIDE_TGT.z + 13.5,
+}
 const OFFICE_POS = { x: provincialOffice.x - 2.1, z: provincialOffice.z + 4.2 }
 const OFFICE_TGT = { x: provincialOffice.x, z: provincialOffice.z }
 const MAP_CENTER = { x: 0, z: 4 }
@@ -104,7 +112,24 @@ function buildKeyframes(gwangjuMapCenter) {
     [0.3571, CNU_POS.x, 0.9, CNU_POS.z, CNU_TGT.x, 0.35, CNU_TGT.z],
     [0.4286, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
     [0.5, MBC_CAM_POS.x, 5, MBC_CAM_POS.z, MBC_CAM_TGT.x, 3, MBC_CAM_TGT.z],
-    [0.5714, GEUMNAMRO_POS.x, 1.15, GEUMNAMRO_POS.z, GEUMNAMRO_TGT.x, 0.4, GEUMNAMRO_TGT.z],
+    [
+      0.5357,
+      GEUMNAMRO_WIDE_POS.x,
+      8.5,
+      GEUMNAMRO_WIDE_POS.z,
+      GEUMNAMRO_WIDE_TGT.x,
+      0.2,
+      GEUMNAMRO_WIDE_TGT.z,
+    ],
+    [
+      0.5714,
+      GEUMNAMRO_WIDE_POS.x,
+      8.5,
+      GEUMNAMRO_WIDE_POS.z,
+      GEUMNAMRO_WIDE_TGT.x,
+      0.2,
+      GEUMNAMRO_WIDE_TGT.z,
+    ],
     [0.6429, JEONIL_CAM_POS.x, 4, JEONIL_CAM_POS.z, JEONIL_CAM_TGT.x, 12, JEONIL_CAM_TGT.z],
     [0.7143, gwangjuMapCenter.x, 60, gwangjuMapCenter.z, gwangjuMapCenter.x, 0, gwangjuMapCenter.z],
     [0.7857, SQUARE_CAM_POS.x, 4.2, SQUARE_CAM_POS.z, SQUARE_CAM_TGT.x, 0.45, SQUARE_CAM_TGT.z],

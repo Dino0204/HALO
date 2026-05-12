@@ -1,10 +1,20 @@
-import { useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
+import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import {
+  GWANGJU_ROADS_URL,
+  createGeumnamroPath,
+  pathLength,
+  pointAtDistance,
+} from '../utils/geumnamroPath'
 
 const FINAL_MAP_REVEAL_START = 0.9286
 const CNU_GATE_MARKER_SCALE = 0.3
+const GEUMNAMRO_ALERT_START = 0.5
+const GEUMNAMRO_ALERT_END = 0.6429
+const GEUMNAMRO_PULSE_RATIOS = [0.16, 0.52, 0.86]
 
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
@@ -60,6 +70,97 @@ function GeumnamroMarker() {
   )
 }
 
+function GeumnamroPulse() {
+  const refs = useRef([])
+  const scroll = useScroll()
+  const [roads, setRoads] = useState(null)
+
+  useEffect(() => {
+    fetch(GWANGJU_ROADS_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load Gwangju roads for Geumnamro pulse: ${response.status}`)
+        }
+        return response.json()
+      })
+      .then(setRoads)
+      .catch(console.error)
+  }, [])
+
+  const roadPath = useMemo(() => {
+    if (!roads) return []
+    return createGeumnamroPath(roads)
+  }, [roads])
+
+  const roadDistance = useMemo(() => pathLength(roadPath), [roadPath])
+
+  const fallbackPoints = useMemo(() => {
+    const start = GWANGJU_LANDMARKS.geumnamroPark
+    const end = GWANGJU_LANDMARKS.jeonilBuilding
+    return GEUMNAMRO_PULSE_RATIOS.map((ratio) => ({
+      x: THREE.MathUtils.lerp(start.x, end.x, ratio),
+      z: THREE.MathUtils.lerp(start.z, end.z, ratio),
+    }))
+  }, [])
+
+  const points = useMemo(() => {
+    if (roadDistance <= 0) {
+      return fallbackPoints.map((point, index) => ({
+        ...point,
+        offset: index * 0.3,
+      }))
+    }
+
+    return GEUMNAMRO_PULSE_RATIOS.map((ratio, index) => {
+      const { point } = pointAtDistance(roadPath, roadDistance * ratio)
+      return {
+        ...point,
+        offset: index * 0.3,
+      }
+    })
+  }, [fallbackPoints, roadDistance, roadPath])
+
+  useFrame(({ clock }) => {
+    const t = scroll.offset
+    const active = t >= GEUMNAMRO_ALERT_START && t < GEUMNAMRO_ALERT_END
+
+    refs.current.forEach((ring, i) => {
+      if (!ring) return
+      ring.visible = active
+      if (!active) return
+
+      const phase = (clock.elapsedTime * 0.7 + points[i].offset) % 1
+      const scale = 0.7 + phase * 3.6
+      ring.scale.setScalar(scale)
+      ring.material.opacity = (1 - phase) * 0.82
+    })
+  })
+
+  return (
+    <>
+      {points.map((point, i) => (
+        <mesh
+          key={`${point.x}-${point.z}`}
+          ref={(el) => (refs.current[i] = el)}
+          position={[point.x, 0.22, point.z]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          visible={false}
+        >
+          <ringGeometry args={[0.3, 0.58, 64]} />
+          <meshBasicMaterial
+            color="#ff4a2b"
+            transparent
+            opacity={0}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </>
+  )
+}
+
 export default function GwangjuLandmarks() {
   const cnuRef = useRef()
   const downtownRef = useRef()
@@ -82,6 +183,7 @@ export default function GwangjuLandmarks() {
       </group>
       <group ref={downtownRef} visible={false}>
         <GeumnamroMarker />
+        <GeumnamroPulse />
       </group>
     </>
   )
