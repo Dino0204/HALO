@@ -8,6 +8,7 @@ import {
   MIN_BUILDING_SIZE,
   cityVisualBbox,
 } from '../utils/gwangjuCityScale'
+import { CEMETERY_POS, MBC_POS } from './landmarkPositions'
 
 const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
 const DATA_ROOT = '/data/gwangju-buildings/'
@@ -25,9 +26,21 @@ const BUILDING_COLORS = {
   default: new THREE.Color('#666666'),
 }
 const LANDMARK_CLEAR_ZONES = [
-  { center: GWANGJU_LANDMARKS.cnuGate, halfX: 3.2, halfZ: 2.4 },
+  {
+    center: { x: GWANGJU_LANDMARKS.cnuGate.x, z: GWANGJU_LANDMARKS.cnuGate.z - 3 },
+    halfX: 4,
+    halfZ: 4,
+  },
   { center: GWANGJU_LANDMARKS.geumnamroPark, halfX: 1.4, halfZ: 1.4 },
-  { center: GWANGJU_LANDMARKS.jeonilBuilding, halfX: 2.2, halfZ: 1.7 },
+  { center: GWANGJU_LANDMARKS.jeonilBuilding, halfX: 3, halfZ: 2.4 },
+  {
+    center: { x: GWANGJU_LANDMARKS.jeonilBuilding.x, z: GWANGJU_LANDMARKS.jeonilBuilding.z + 4 },
+    halfX: 3.3,
+    halfZ: 3.3,
+  },
+  { center: GWANGJU_LANDMARKS.provincialOffice, halfX: 2, halfZ: 2 },
+  { center: MBC_POS, halfX: 5.5, halfZ: 5.5 },
+  { center: CEMETERY_POS, halfX: 8, halfZ: 8 },
 ]
 
 function isCitySceneVisible(t) {

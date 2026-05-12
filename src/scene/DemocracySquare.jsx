@@ -11,9 +11,9 @@ const SQUARE_POS = {
   y: 0,
   z: GWANGJU_LANDMARKS.jeonilBuilding.z + 4,
 }
-const SQUARE_MODEL_SCALE = 0.4
-const SQUARE_GATHERING_RADIUS = 6
-const SQUARE_GROUND_SIZE = 22
+const SQUARE_MODEL_SCALE = 0.12
+const SQUARE_GATHERING_RADIUS = 1.8
+const SQUARE_GROUND_SIZE = 6.6
 const CITIZEN_COUNT = 1500
 
 function seededRandom(seed) {

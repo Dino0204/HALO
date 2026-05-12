@@ -9,14 +9,15 @@ const SCROLL_END = 0.8571
 const OFFICE_POS = GWANGJU_LANDMARKS.provincialOffice
 const OFFICE_MODEL_URL = '/models/former-jeonnam-provincial-office.glb'
 const ARMORED_VEHICLE_MODEL_URL = '/models/m113a1.glb'
-const OFFICE_MODEL_SCALE = 0.08
-const ARMORED_VEHICLE_MODEL_SCALE = 0.56
-const VEHICLE_START_Z = OFFICE_POS.z + 34
-const VEHICLE_TRAVEL_DISTANCE = 30
+const OFFICE_MODEL_SCALE = 0.024
+const OFFICE_MODEL_Y_OFFSET = 0.45
+const ARMORED_VEHICLE_MODEL_SCALE = 0.168
+const VEHICLE_START_Z = OFFICE_POS.z + 10.2
+const VEHICLE_TRAVEL_DISTANCE = 9
 const VEHICLE_OFFSETS = [
   { x: 0, z: 0 },
-  { x: 2.35, z: 6 },
-  { x: -2.35, z: 12 },
+  { x: 0.7, z: 1.8 },
+  { x: -0.7, z: 3.6 },
 ]
 
 function ArmoredVehicle({ vehicleRef, offsetX, offsetZ }) {
@@ -58,7 +59,7 @@ export default function ProvincialOffice() {
     <group ref={groupRef}>
       <primitive
         object={scene}
-        position={[OFFICE_POS.x, 0, OFFICE_POS.z]}
+        position={[OFFICE_POS.x, OFFICE_MODEL_Y_OFFSET, OFFICE_POS.z]}
         rotation={[0, Math.PI, 0]}
         scale={OFFICE_MODEL_SCALE}
       />
