@@ -24,7 +24,7 @@ const SCENE_CONTENT = [
   // Scene 02
   {
     topLeft: '1980년 봄',
-    center: '전국 대학가에서\n민주화의 목소리가가 터져 나왔다.',
+    center: '전국 대학가에서\n민주화의 목소리가 터져 나왔다.',
     bottom: '서울 · 부산 · 대구 · 광주 · 대전 · 인천 등',
   },
   // Scene 03
@@ -449,7 +449,6 @@ export default function TextOverlay() {
                 right: '1.5rem',
                 fontSize: '0.7rem',
                 fontFamily: 'monospace',
-                opacity: 0.4,
                 maxWidth: 'min(300px, calc(100vw - 3rem))',
                 textAlign: 'right',
                 lineHeight: '1.5',
