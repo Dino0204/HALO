@@ -37,7 +37,7 @@ const SCENE_CONTENT = [
     topLeft: '1980.05.18',
     topLeftColor: '#ff6666',
     bottom: '계엄군이 학생들을 진압봉으로 가격했다.\n지나가던 시민도 진압 대상이 됐다.',
-    bottomSmall: '전남대학교 정문 앞 — 오전 10시',
+    bottomRight: '전남대학교 정문 앞 — 오전 10시',
   },
   // Scene 05
   {
@@ -51,7 +51,7 @@ const SCENE_CONTENT = [
     topLeftColor: '#ff6666',
     center: '광주MBC가 불길에 휩싸였다.',
     bottom: '방송은 시민이 죽어가는 도시를 보도하지 않았다.\n분노한 시민들이 방송국을 방화했다.',
-    bottomSmall: '광주MBC 사옥 — 5월 20일 21:50',
+    bottomRight: '광주MBC 사옥 — 5월 20일 21:50',
   },
   // Scene 07 — 집단 발포 (was Scene 06)
   {
@@ -94,7 +94,7 @@ const SCENE_CONTENT = [
   {
     topCenter: '9일간의 기록',
     stats: true,
-    bottomSmall: '출처: 5·18 유공자 유족회 등 4개 단체 발표',
+    bottomRight: '출처: 5·18 유공자 유족회 등 4개 단체 발표',
   },
   // Scene 13 — 기억 / 국립5.18민주묘지 (was Scene 10)
   {
@@ -440,36 +440,17 @@ export default function TextOverlay() {
             </div>
           )}
 
-          {/* Bottom small */}
-          {sc.bottomSmall && (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '1.5rem',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                fontSize: '0.7rem',
-                fontFamily: 'monospace',
-                opacity: 0.5,
-                letterSpacing: '0.12em',
-                textAlign: 'center',
-              }}
-            >
-              {sc.bottomSmall}
-            </div>
-          )}
-
           {/* Bottom right */}
           {sc.bottomRight && (
             <div
               style={{
                 position: 'absolute',
-                bottom: '3rem',
-                right: '2rem',
+                bottom: '6.75rem',
+                right: '1.5rem',
                 fontSize: '0.7rem',
                 fontFamily: 'monospace',
                 opacity: 0.4,
-                maxWidth: '300px',
+                maxWidth: 'min(300px, calc(100vw - 3rem))',
                 textAlign: 'right',
                 lineHeight: '1.5',
               }}
@@ -556,6 +537,7 @@ export default function TextOverlay() {
           color: '#554',
           lineHeight: '1.6',
           textAlign: 'right',
+          maxWidth: 'min(620px, calc(100vw - 3rem))',
           pointerEvents: 'none',
         }}
       >
