@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useScroll } from '@react-three/drei'
+import { Text, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 import {
@@ -9,12 +9,49 @@ import {
   pathLength,
   pointAtDistance,
 } from '../utils/geumnamroPath'
+import { CEMETERY_POS, MBC_POS } from './landmarkPositions'
 
 const FINAL_MAP_REVEAL_START = 0.9286
+const FINAL_MAP_LABEL_END = 0.9643
 const CNU_GATE_MARKER_SCALE = 0.3
 const GEUMNAMRO_ALERT_START = 0.5
 const GEUMNAMRO_ALERT_END = 0.6429
 const GEUMNAMRO_PULSE_RATIOS = [0.16, 0.52, 0.86]
+const FINAL_LABELS = [
+  {
+    label: '전남대 정문',
+    point: GWANGJU_LANDMARKS.cnuGate,
+    textOffset: [-2.2, -1.1],
+  },
+  {
+    label: '금남로',
+    point: {
+      x: (GWANGJU_LANDMARKS.geumnamroPark.x + GWANGJU_LANDMARKS.jeonilBuilding.x) / 2,
+      z: (GWANGJU_LANDMARKS.geumnamroPark.z + GWANGJU_LANDMARKS.jeonilBuilding.z) / 2,
+    },
+    textOffset: [1.6, -1.15],
+  },
+  {
+    label: '광주MBC',
+    point: MBC_POS,
+    textOffset: [1.55, 1.15],
+  },
+  {
+    label: '전일빌딩',
+    point: GWANGJU_LANDMARKS.jeonilBuilding,
+    textOffset: [1.7, 1.25],
+  },
+  {
+    label: '전남도청',
+    point: GWANGJU_LANDMARKS.provincialOffice,
+    textOffset: [-2.1, 1.25],
+  },
+  {
+    label: '국립5.18민주묘지',
+    point: CEMETERY_POS,
+    textOffset: [2.5, 1.2],
+  },
+]
 
 function CnuGate() {
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
@@ -161,6 +198,65 @@ function GeumnamroPulse() {
   )
 }
 
+function FinalMapLabel({ label, point, textOffset }) {
+  return (
+    <group position={[point.x, 0.34, point.z]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.38, 0.58, 48]} />
+        <meshBasicMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.95}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.16, 32]} />
+        <meshBasicMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.9}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <Text
+        position={[textOffset[0], 0.02, textOffset[1]]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        fontSize={0.9}
+        anchorX="center"
+        anchorY="middle"
+        color="#ffffff"
+        outlineWidth={0.035}
+        outlineColor="#000000"
+      >
+        {label}
+        <meshBasicMaterial color="#ffffff" depthWrite={false} side={THREE.DoubleSide} />
+      </Text>
+    </group>
+  )
+}
+
+function FinalMapLabels() {
+  const groupRef = useRef()
+  const scroll = useScroll()
+
+  useFrame(() => {
+    if (!groupRef.current) return
+    const t = scroll.offset
+    groupRef.current.visible = t >= FINAL_MAP_REVEAL_START && t < FINAL_MAP_LABEL_END
+  })
+
+  return (
+    <group ref={groupRef} visible={false}>
+      {FINAL_LABELS.map((item) => (
+        <FinalMapLabel key={item.label} {...item} />
+      ))}
+    </group>
+  )
+}
+
 export default function GwangjuLandmarks() {
   const cnuRef = useRef()
   const downtownRef = useRef()
@@ -168,9 +264,8 @@ export default function GwangjuLandmarks() {
 
   useFrame(() => {
     const t = scroll.offset
-    const cnuVisible = (t > 0.32 && t < 0.5) || t >= FINAL_MAP_REVEAL_START
-    const downtownVisible =
-      (t >= 0.5 && t < 0.6429) || (t > 0.7857 && t < 0.9286) || t >= FINAL_MAP_REVEAL_START
+    const cnuVisible = t > 0.32 && t < 0.5
+    const downtownVisible = t >= 0.5 && t < 0.6429
 
     if (cnuRef.current) cnuRef.current.visible = cnuVisible
     if (downtownRef.current) downtownRef.current.visible = downtownVisible
@@ -185,6 +280,7 @@ export default function GwangjuLandmarks() {
         <GeumnamroMarker />
         <GeumnamroPulse />
       </group>
+      <FinalMapLabels />
     </>
   )
 }

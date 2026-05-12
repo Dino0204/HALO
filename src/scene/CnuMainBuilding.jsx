@@ -5,7 +5,6 @@ import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 
 const SCROLL_START = 0.2857
 const SCROLL_END = 0.5
-const FINAL_MAP_REVEAL_START = 0.9286
 const CNU_GATE_MODEL_SCALE = 0.035
 const CNU_GATE_MODEL_Y_OFFSET = -0.1
 
@@ -19,7 +18,7 @@ export default function CnuMainBuilding() {
   useFrame(() => {
     if (!groupRef.current) return
     const t = scroll.offset
-    groupRef.current.visible = (t >= SCROLL_START && t < SCROLL_END) || t >= FINAL_MAP_REVEAL_START
+    groupRef.current.visible = t >= SCROLL_START && t < SCROLL_END
   })
 
   return (

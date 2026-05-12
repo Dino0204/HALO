@@ -89,7 +89,6 @@ const SCENE_CONTENT = [
   {
     topCenter: '9일간의 기록',
     stats: true,
-    bottom: '이것은 공식적으로 인정된 숫자다.\n발표 기관에 따라 수치는 조금씩 다르며,\n모든 피해가 완전히 밝혀지지 않았다.',
     bottomSmall: '출처: 5·18 유공자 유족회 등 4개 단체 발표',
   },
   // Scene 13 — 기억 / 국립5.18민주묘지 (was Scene 10)

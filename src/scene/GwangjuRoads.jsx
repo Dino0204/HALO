@@ -8,6 +8,7 @@ const ROADS_URL = '/data/gwangju-roads/roads.json'
 const CITY_VISIBLE_START = 0.2857
 const CITY_VISIBLE_END = 0.9286
 const FINAL_MAP_REVEAL_START = 0.9286
+const OFFICE_FOCUS_START = 0.7857
 const ROAD_Y = {
   major: 0.055,
   street: 0.065,
@@ -70,6 +71,7 @@ function createGeometry(features, roadClass) {
 
 export default function GwangjuRoads() {
   const groupRef = useRef()
+  const geumnamroRef = useRef()
   const scroll = useScroll()
   const [roads, setRoads] = useState(null)
 
@@ -120,7 +122,11 @@ export default function GwangjuRoads() {
 
   useFrame(() => {
     if (!groupRef.current) return
-    groupRef.current.visible = isCitySceneVisible(scroll.offset)
+    const t = scroll.offset
+    groupRef.current.visible = isCitySceneVisible(t)
+    if (geumnamroRef.current) {
+      geumnamroRef.current.visible = t < OFFICE_FOCUS_START
+    }
   })
 
   if (!geometries) {
@@ -138,7 +144,7 @@ export default function GwangjuRoads() {
       <lineSegments geometry={geometries.walk}>
         <lineBasicMaterial color="#56635c" transparent opacity={0.7} />
       </lineSegments>
-      <lineSegments geometry={geometries.geumnamro}>
+      <lineSegments ref={geumnamroRef} geometry={geometries.geumnamro}>
         <lineBasicMaterial color="#f0d36d" transparent opacity={1} />
       </lineSegments>
     </group>
