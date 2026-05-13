@@ -9,10 +9,16 @@ export default function HUDLocation() {
   if (!region) return null
 
   return (
-    <div className="pointer-events-none fixed top-8 left-8 z-20 font-mono">
-      {region && <div className="mb-1 text-[0.7rem] tracking-[0.2em] text-white/50">{region}</div>}
+    <div className="pointer-events-none fixed top-5 left-5 z-20 max-w-[calc(100vw-9rem)] font-mono sm:top-8 sm:left-8 sm:max-w-none">
+      {region && (
+        <div className="mb-1 text-[0.62rem] leading-[1.35] tracking-[0.14em] text-white/50 sm:text-[0.7rem] sm:tracking-[0.2em]">
+          {region}
+        </div>
+      )}
       {place && (
-        <div className="font-serif text-[0.95rem] tracking-[0.08em] text-[#e8e0d0]/85">{place}</div>
+        <div className="font-serif text-[0.78rem] leading-[1.45] tracking-[0.05em] text-[#e8e0d0]/85 sm:text-[0.95rem] sm:tracking-[0.08em]">
+          {place}
+        </div>
       )}
     </div>
   )

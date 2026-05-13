@@ -237,7 +237,7 @@ export default function TextOverlay() {
 
       {/* Interaction Hint - Visible when not pressing space */}
       <div
-        className="absolute top-[70%] left-0 flex w-full -translate-y-1/2 justify-center transition-[opacity,visibility] duration-700"
+        className="absolute top-[68%] left-0 flex w-full -translate-y-1/2 justify-center px-5 transition-[opacity,visibility] duration-700 sm:top-[70%]"
         style={{
           opacity: showHint && !isScrolling ? 1 : 0,
           visibility: showHint && !isScrolling ? 'visible' : 'hidden',
@@ -247,10 +247,10 @@ export default function TextOverlay() {
           className="flex flex-col items-center gap-3"
           style={{ animation: 'hintPulse 3s infinite ease-in-out' }}
         >
-          <div className="rounded-md border border-[#e8e0d0]/60 bg-black/40 px-5 py-2 pl-[calc(1.25rem+0.3em)] font-mono text-[0.8rem] font-bold tracking-[0.3em] text-white shadow-[0_0_20px_rgba(0,0,0,0.5),inset_0_0_10px_rgba(232,224,208,0.1)] backdrop-blur-md">
+          <div className="rounded-md border border-[#e8e0d0]/60 bg-black/40 px-4 py-2 pl-[calc(1rem+0.22em)] font-mono text-[0.72rem] font-bold tracking-[0.22em] text-white shadow-[0_0_20px_rgba(0,0,0,0.5),inset_0_0_10px_rgba(232,224,208,0.1)] backdrop-blur-md sm:px-5 sm:pl-[calc(1.25rem+0.3em)] sm:text-[0.8rem] sm:tracking-[0.3em]">
             SPACE HOLD
           </div>
-          <span className="w-full pl-[0.15em] text-center text-xs font-medium tracking-[0.15em] text-[#e8e0d0] [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
+          <span className="w-full pl-[0.15em] text-center text-[0.68rem] font-medium tracking-[0.12em] text-[#e8e0d0] [text-shadow:0_2px_10px_rgba(0,0,0,0.9)] sm:text-xs sm:tracking-[0.15em]">
             꾹 눌러서 진행하기
           </span>
         </div>
@@ -266,7 +266,7 @@ export default function TextOverlay() {
           {/* Top left date/label — 5.5rem to stay below HUDLocation */}
           {sc.topLeft && (
             <div
-              className="absolute top-[5.5rem] left-8 font-mono text-[0.85rem] tracking-[0.15em]"
+              className="absolute top-[4.9rem] left-5 max-w-[calc(100vw-8rem)] font-mono text-[0.72rem] leading-[1.5] tracking-[0.12em] sm:top-[5.5rem] sm:left-8 sm:text-[0.85rem] sm:tracking-[0.15em]"
               style={{
                 color: sc.topLeftColor || '#e8e0d0',
               }}
@@ -277,44 +277,46 @@ export default function TextOverlay() {
 
           {/* Top center */}
           {sc.topCenter && (
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center text-[clamp(1.2rem,2.5vw,1.8rem)] tracking-[0.1em]">
+            <div className="absolute top-20 left-1/2 w-[calc(100vw-2.5rem)] -translate-x-1/2 text-center text-[clamp(1.05rem,5vw,1.35rem)] tracking-[0.08em] sm:top-8 sm:w-auto sm:text-[clamp(1.2rem,2.5vw,1.8rem)] sm:tracking-[0.1em]">
               {sc.topCenter}
             </div>
           )}
 
           {/* Center main text */}
           {sc.center && (
-            <div className="absolute top-1/2 left-1/2 max-w-[680px] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(1rem,2vw,1.4rem)] leading-[1.8] [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
+            <div className="absolute top-1/2 left-1/2 w-[calc(100vw-3rem)] max-w-[680px] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(0.95rem,4.7vw,1.18rem)] leading-[1.65] [text-shadow:0_1px_8px_rgba(0,0,0,0.8)] sm:w-auto sm:text-[clamp(1rem,2vw,1.4rem)] sm:leading-[1.8]">
               {sc.center}
             </div>
           )}
 
           {/* Center small */}
           {sc.centerSmall && (
-            <div className="absolute top-[calc(50%+3rem)] left-1/2 -translate-x-1/2 text-center font-mono text-[0.8rem] tracking-[0.1em] opacity-60">
+            <div className="absolute top-[calc(50%+3rem)] left-1/2 w-[calc(100vw-3rem)] -translate-x-1/2 text-center font-mono text-[0.7rem] leading-[1.5] tracking-[0.08em] opacity-60 sm:w-auto sm:text-[0.8rem] sm:tracking-[0.1em]">
               {sc.centerSmall}
             </div>
           )}
 
           {/* Center quote (Scene 08 — italic) */}
           {sc.centerQuote && (
-            <div className="absolute top-[38%] left-1/2 max-w-[700px] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.9] italic [text-shadow:0_1px_8px_rgba(0,0,0,0.9)]">
+            <div className="absolute top-[40%] left-1/2 w-[calc(100vw-3rem)] max-w-[700px] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(0.95rem,4.4vw,1.16rem)] leading-[1.75] italic [text-shadow:0_1px_8px_rgba(0,0,0,0.9)] sm:top-[38%] sm:w-auto sm:text-[clamp(1rem,2.2vw,1.4rem)] sm:leading-[1.9]">
               {sc.centerQuote}
             </div>
           )}
 
           {/* Statistics (Scene 09) */}
           {sc.stats && (
-            <div className="absolute top-1/2 left-1/2 grid w-[min(500px,90vw)] -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-4">
+            <div className="absolute top-1/2 left-1/2 grid w-[min(500px,calc(100vw-3rem))] -translate-x-1/2 -translate-y-1/2 grid-cols-2 gap-2.5 sm:gap-4">
               {[
                 { label: '사망 인정', value: '165명' },
                 { label: '행방불명', value: '65명' },
                 { label: '부상', value: '3,028명' },
                 { label: '구속·구금', value: '1,589명' },
               ].map(({ label, value }) => (
-                <div key={label} className="border border-[#555] bg-black/80 p-4 text-center">
-                  <div className="mb-2 font-mono text-xs opacity-60">{label}</div>
-                  <div className="text-[1.4rem] font-bold">{value}</div>
+                <div key={label} className="border border-[#555] bg-black/80 p-3 text-center sm:p-4">
+                  <div className="mb-1.5 font-mono text-[0.65rem] opacity-60 sm:mb-2 sm:text-xs">
+                    {label}
+                  </div>
+                  <div className="text-[1.15rem] font-bold sm:text-[1.4rem]">{value}</div>
                 </div>
               ))}
             </div>
@@ -322,33 +324,33 @@ export default function TextOverlay() {
 
           {/* Bottom text */}
           {sc.bottom && (
-            <div className="absolute bottom-12 left-1/2 max-w-[680px] -translate-x-1/2 whitespace-pre-line text-center text-[clamp(0.85rem,1.6vw,1.1rem)] leading-[1.8] [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
+            <div className="absolute bottom-[6.75rem] left-1/2 w-[calc(100vw-3rem)] max-w-[680px] -translate-x-1/2 whitespace-pre-line text-center text-[clamp(0.78rem,3.7vw,0.95rem)] leading-[1.65] [text-shadow:0_1px_8px_rgba(0,0,0,0.8)] sm:bottom-12 sm:w-auto sm:text-[clamp(0.85rem,1.6vw,1.1rem)] sm:leading-[1.8]">
               {sc.bottom}
             </div>
           )}
 
           {/* Bottom right */}
           {sc.bottomRight && (
-            <div className="absolute right-6 bottom-[6.75rem] max-w-[min(300px,calc(100vw-3rem))] text-right font-mono text-[0.7rem] leading-[1.5]">
+            <div className="absolute right-5 bottom-[4.8rem] max-w-[min(300px,calc(100vw-3rem))] text-right font-mono text-[0.62rem] leading-[1.45] sm:right-6 sm:bottom-[6.75rem] sm:text-[0.7rem] sm:leading-[1.5]">
               {sc.bottomRight}
             </div>
           )}
 
           {/* Bottom left */}
           {sc.bottomLeft && (
-            <div className="absolute bottom-8 left-8 font-mono text-[0.7rem] tracking-[0.1em] opacity-50">
+            <div className="absolute bottom-[4.8rem] left-5 max-w-[calc(100vw-7rem)] font-mono text-[0.62rem] leading-[1.5] tracking-[0.08em] opacity-50 sm:bottom-8 sm:left-8 sm:text-[0.7rem] sm:tracking-[0.1em]">
               {sc.bottomLeft}
             </div>
           )}
 
           {/* Final message (Scene 10) */}
           {sc.finalMessage && scrollOffset >= FINAL_MESSAGE_START && (
-            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(1.6rem,3.5vw,2.6rem)] tracking-[0.15em]">
+            <div className="absolute top-[44%] left-1/2 w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(1.4rem,7vw,2rem)] tracking-[0.1em] sm:top-[45%] sm:w-auto sm:text-[clamp(1.6rem,3.5vw,2.6rem)] sm:tracking-[0.15em]">
               {sc.finalMessage}
             </div>
           )}
           {sc.finalSub && scrollOffset >= FINAL_MESSAGE_START && (
-            <div className="absolute top-[calc(45%+4rem)] left-1/2 -translate-x-1/2 text-[clamp(0.9rem,1.8vw,1.2rem)] tracking-[0.25em] text-[#b0a090]">
+            <div className="absolute top-[calc(44%+3.25rem)] left-1/2 w-[calc(100vw-3rem)] -translate-x-1/2 text-center text-[clamp(0.8rem,3.8vw,1rem)] tracking-[0.16em] text-[#b0a090] sm:top-[calc(45%+4rem)] sm:w-auto sm:text-[clamp(0.9rem,1.8vw,1.2rem)] sm:tracking-[0.25em]">
               {sc.finalSub}
             </div>
           )}
@@ -356,12 +358,14 @@ export default function TextOverlay() {
       ))}
 
       {scrollOffset >= FINAL_MAP_TITLE_START && scrollOffset < FINAL_MAP_TITLE_END && (
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center text-[clamp(1.2rem,2.5vw,1.8rem)] tracking-[0.1em] [text-shadow:0_1px_8px_rgba(0,0,0,0.85)]">
+        <div className="absolute top-20 left-1/2 w-[calc(100vw-2.5rem)] -translate-x-1/2 text-center text-[clamp(1.05rem,5vw,1.35rem)] tracking-[0.08em] [text-shadow:0_1px_8px_rgba(0,0,0,0.85)] sm:top-8 sm:w-auto sm:text-[clamp(1.2rem,2.5vw,1.8rem)] sm:tracking-[0.1em]">
           9일간의 기록
         </div>
       )}
 
-      <div className="-z-20 pointer-events-none absolute right-6 bottom-4 max-w-[min(620px,calc(100vw-3rem))] text-right text-[0.65rem] leading-[1.6] text-[#554]">
+      <div className="-z-20 pointer-events-none absolute right-5 bottom-3 max-w-[min(620px,calc(100vw-2.5rem))] text-right text-[0.56rem] leading-[1.5] text-[#554] sm:right-6 sm:bottom-4 sm:max-w-[min(620px,calc(100vw-3rem))] sm:text-[0.65rem] sm:leading-[1.6]">
+        제작: 김준혁(dino)
+        <br />
         지리 데이터: © OpenStreetMap contributors (ODbL)
         <br />
         역사 자료: 5·18기념재단, 5·18민주화운동기록관, 민주화운동기념사업회

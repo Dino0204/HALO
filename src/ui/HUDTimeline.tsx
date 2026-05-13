@@ -11,9 +11,11 @@ export default function HUDTimeline() {
   const isFinal = data.date === '5.27'
 
   return (
-    <div className="pointer-events-none fixed top-1/2 right-10 z-20 flex -translate-y-1/2 flex-col items-center font-mono text-white">
-      <span className="text-xs tracking-[0.1em] opacity-45">5.18</span>
-      <div className="relative h-[100px] w-px bg-white/15">
+    <div className="pointer-events-none fixed top-1/2 right-5 z-20 flex -translate-y-1/2 flex-col items-center font-mono text-white sm:right-10">
+      <span className="text-[0.62rem] tracking-[0.08em] opacity-40 sm:text-xs sm:tracking-[0.1em] sm:opacity-45">
+        5.18
+      </span>
+      <div className="relative h-[70px] w-px bg-white/15 sm:h-[100px]">
         <div
           className="absolute top-0 w-full bg-white/70"
           style={{
@@ -22,7 +24,7 @@ export default function HUDTimeline() {
         />
       </div>
       <span
-        className="text-[1.1rem] font-bold tracking-[0.12em] transition-all duration-700"
+        className="text-[0.88rem] font-bold tracking-[0.08em] transition-all duration-700 sm:text-[1.1rem] sm:tracking-[0.12em]"
         style={{
           textShadow: isFinal ? '0 0 12px rgba(255,80,80,0.5)' : '0 0 12px rgba(255,255,255,0.4)',
           color: isFinal ? '#ff6666' : '#ffffff',
@@ -30,7 +32,7 @@ export default function HUDTimeline() {
       >
         {data.date}
       </span>
-      <div className="relative h-[100px] w-px bg-white/15">
+      <div className="relative h-[70px] w-px bg-white/15 sm:h-[100px]">
         <div
           className="absolute bottom-0 w-full bg-white/15"
           style={{
@@ -38,7 +40,9 @@ export default function HUDTimeline() {
           }}
         />
       </div>
-      <span className="text-xs tracking-[0.1em] opacity-45">5.27</span>
+      <span className="text-[0.62rem] tracking-[0.08em] opacity-40 sm:text-xs sm:tracking-[0.1em] sm:opacity-45">
+        5.27
+      </span>
     </div>
   )
 }

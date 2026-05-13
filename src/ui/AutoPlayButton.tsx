@@ -39,10 +39,10 @@ export default function AutoPlayButton() {
   }
 
   return (
-    <div className="fixed top-8 right-10 z-20 flex items-center gap-1.5">
+    <div className="fixed top-5 right-5 z-20 flex items-center gap-1 sm:top-8 sm:right-10 sm:gap-1.5">
       <button
         onClick={toggle}
-        className="flex size-8 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-50 transition-opacity duration-200 hover:opacity-100"
+        className="flex size-7 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-55 transition-opacity duration-200 hover:opacity-100 sm:size-8 sm:opacity-50"
         aria-label={isPlaying ? '정지' : '자동 재생'}
       >
         {isPlaying ? (
@@ -57,19 +57,24 @@ export default function AutoPlayButton() {
         )}
       </button>
 
-      <div className="flex items-center gap-1.5">
-        <span className="min-w-6 select-none text-right font-mono text-[0.7rem] tracking-[0.05em] text-white/50">
+      <div className="flex items-center gap-1 sm:gap-1.5">
+        <span className="min-w-5 select-none text-right font-mono text-[0.62rem] tracking-[0.04em] text-white/50 sm:min-w-6 sm:text-[0.7rem] sm:tracking-[0.05em]">
           {speed}×
         </span>
         <style>{`
           .speed-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 64px;
+            width: 44px;
             height: 2px;
             background: rgba(255,255,255,0.2);
             outline: none;
             cursor: pointer;
+          }
+          @media (min-width: 640px) {
+            .speed-slider {
+              width: 64px;
+            }
           }
           .speed-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -103,7 +108,7 @@ export default function AutoPlayButton() {
 
       <button
         onClick={goToStart}
-        className="flex size-7 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-45 transition-opacity duration-200 hover:opacity-100"
+        className="flex size-6 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-50 transition-opacity duration-200 hover:opacity-100 sm:size-7 sm:opacity-45"
         aria-label="처음으로"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -114,7 +119,7 @@ export default function AutoPlayButton() {
 
       <button
         onClick={goToEnd}
-        className="flex size-7 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-45 transition-opacity duration-200 hover:opacity-100"
+        className="flex size-6 cursor-pointer items-center justify-center border-0 bg-transparent p-0 opacity-50 transition-opacity duration-200 hover:opacity-100 sm:size-7 sm:opacity-45"
         aria-label="끝으로"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

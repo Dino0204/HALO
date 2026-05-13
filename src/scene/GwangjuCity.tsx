@@ -14,7 +14,6 @@ import {
   GWANGJU_LANDMARKS,
   MIN_BUILDING_SIZE,
   cityVisualBbox,
-  type Bbox,
 } from '../utils/gwangjuCityScale'
 import { CEMETERY_POS, MBC_POS } from './landmarkPositions'
 
