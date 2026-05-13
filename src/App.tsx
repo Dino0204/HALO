@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { ScrollControls, useProgress } from '@react-three/drei'
 import Experience from './scene/Experience'
 import ScrollSync from './scene/ScrollSync'
+import { preloadSceneAssets } from './utils/assetPreload'
 import TextOverlay from './ui/TextOverlay'
 import HUDTimeline from './ui/HUDTimeline'
 import HUDLocation from './ui/HUDLocation'
@@ -16,18 +17,37 @@ const LOADING_LOGO_SRC = '/logo.png'
 function LoadingScreen() {
   const { active, progress } = useProgress()
   const [hidden, setHidden] = useState(false)
+  const [assetsReady, setAssetsReady] = useState(false)
   const loadingProgress = Math.round(progress)
-  const loadingStatus = active || loadingProgress < 100 ? '자료를 불러오는 중' : '입장 준비 완료'
+  const loadingStatus =
+    active || loadingProgress < 100 || !assetsReady ? '자료를 불러오는 중' : '입장 준비 완료'
 
   useEffect(() => {
-    if (active || progress < 100) return
+    let cancelled = false
+
+    preloadSceneAssets()
+      .then(() => {
+        if (!cancelled) setAssetsReady(true)
+      })
+      .catch((error) => {
+        console.error(error)
+        if (!cancelled) setAssetsReady(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (active || progress < 100 || !assetsReady) return
 
     const hideTimer = setTimeout(() => {
       setHidden(true)
     }, MIN_LOADING_TIME)
 
     return () => clearTimeout(hideTimer)
-  }, [active, progress])
+  }, [active, assetsReady, progress])
 
   return (
     <div

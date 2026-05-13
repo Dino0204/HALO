@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { EffectComposer } from '@react-three/postprocessing'
+import { Preload } from '@react-three/drei'
 import CameraRig from './CameraRig'
 import KoreaMap from './KoreaMap'
 import MapMarkers from './MapMarkers'
@@ -44,6 +45,7 @@ export default function Experience() {
       <EffectComposer>
         <FilmEffect />
       </EffectComposer>
+      <Preload all />
     </>
   )
 }

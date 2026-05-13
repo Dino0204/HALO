@@ -3,8 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import type { FeatureCollection } from 'geojson'
-
-const GEO_URL = '/data/provinces-geo-simple.json'
+import { loadKoreaGeoJson } from '../utils/assetPreload'
 
 const stripeVertexShader = `
   varying vec2 vUv;
@@ -29,9 +28,8 @@ export default function GwangjuBlockade() {
   const [geoJson, setGeoJson] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    fetch(GEO_URL)
-      .then((r) => r.json())
-      .then((data) => setGeoJson(data as FeatureCollection))
+    loadKoreaGeoJson()
+      .then((data) => setGeoJson(data))
       .catch(console.error)
   }, [])
 

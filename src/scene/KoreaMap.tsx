@@ -3,8 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import type { FeatureCollection } from 'geojson'
+import { loadKoreaGeoJson } from '../utils/assetPreload'
 
-const GEO_URL = '/data/provinces-geo-simple.json'
 const CITY_TRANSITION_START = 0.2857
 
 function buildShapesFromGeoJson(geoJson: FeatureCollection): THREE.Shape[] {
@@ -47,14 +47,8 @@ export default function KoreaMap() {
   const scroll = useScroll()
 
   useEffect(() => {
-    fetch(GEO_URL)
-      .then((r) => {
-        if (!r.ok) {
-          throw new Error(`Failed to load Korea map GeoJSON: ${r.status}`)
-        }
-        return r.json()
-      })
-      .then((data) => setGeoJson(data as FeatureCollection))
+    loadKoreaGeoJson()
+      .then((data) => setGeoJson(data))
       .catch(console.error)
   }, [])
 

@@ -2,8 +2,9 @@ import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
-import type { Feature, FeatureCollection } from 'geojson'
+import type { Feature } from 'geojson'
 import { useSceneStore } from '../store/sceneStore'
+import { loadKoreaGeoJson } from '../utils/assetPreload'
 import { GWANGJU_CITY_CENTER, GWANGJU_LANDMARKS, type Point2D } from '../utils/gwangjuCityScale'
 import { MBC_POS, CEMETERY_POS } from './landmarkPositions'
 
@@ -31,7 +32,6 @@ const SCENE_RANGES: Array<[number, number]> = [
 ]
 
 const { cnuGate, geumnamroPark, jeonilBuilding, provincialOffice } = GWANGJU_LANDMARKS
-const GEO_URL = '/data/provinces-geo-simple.json'
 
 const CNU_POS = { x: cnuGate.x - 1.4, z: cnuGate.z + 4.8 }
 const CNU_TGT = { x: cnuGate.x, z: cnuGate.z }
@@ -206,13 +206,7 @@ export default function CameraRig() {
   useEffect(() => {
     let cancelled = false
 
-    fetch(GEO_URL)
-      .then((r) => {
-        if (!r.ok) {
-          throw new Error(`Failed to load Korea map GeoJSON for camera focus: ${r.status}`)
-        }
-        return r.json() as Promise<FeatureCollection>
-      })
+    loadKoreaGeoJson()
       .then((geoJson) => {
         if (cancelled) return
         const gwangju = geoJson.features.find(

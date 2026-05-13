@@ -3,6 +3,13 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import {
+  loadBuildingChunk,
+  loadBuildingManifest,
+  type BuildingChunkData,
+  type BuildingManifest,
+  type BuildingManifestChunk,
+} from '../utils/assetPreload'
+import {
   CITY_HEIGHT_SCALE,
   GWANGJU_LANDMARKS,
   MIN_BUILDING_SIZE,
@@ -11,8 +18,6 @@ import {
 } from '../utils/gwangjuCityScale'
 import { CEMETERY_POS, MBC_POS } from './landmarkPositions'
 
-const MANIFEST_URL = '/data/gwangju-buildings/manifest.json'
-const DATA_ROOT = '/data/gwangju-buildings/'
 const CITY_VISIBLE_START = 0.2857
 const CITY_VISIBLE_END = 0.9286
 const CITY_PRELOAD_START = 0.2143
@@ -54,29 +59,6 @@ const LANDMARK_CLEAR_ZONES = [
   { center: CEMETERY_POS, halfX: 8, halfZ: 8 },
 ]
 
-interface BuildingFeature {
-  properties: {
-    bbox: Bbox
-    height: number
-    building?: string
-  }
-}
-
-interface BuildingChunkData {
-  features: BuildingFeature[]
-  name: string
-}
-
-interface ManifestChunk {
-  key: string
-  file: string
-  bbox: Bbox
-}
-
-interface Manifest {
-  chunks: ManifestChunk[]
-}
-
 function isCitySceneVisible(t: number) {
   return (
     (t > CITY_VISIBLE_START && t < 0.6429) ||
@@ -85,7 +67,7 @@ function isCitySceneVisible(t: number) {
   )
 }
 
-function chunkIntersectsView(chunk: ManifestChunk, camera: THREE.Camera) {
+function chunkIntersectsView(chunk: BuildingManifestChunk, camera: THREE.Camera) {
   const [minX, minZ, maxX, maxZ] = cityVisualBbox(chunk.bbox)
   const x = camera.position.x
   const z = camera.position.z
@@ -203,7 +185,7 @@ export default function GwangjuCity() {
   const groupRef = useRef<THREE.Group>(null!)
   const scroll = useScroll()
   const { camera } = useThree()
-  const [manifest, setManifest] = useState<Manifest | null>(null)
+  const [manifest, setManifest] = useState<BuildingManifest | null>(null)
   const [loadedChunks, setLoadedChunks] = useState<Record<string, BuildingChunkData>>({})
   const [activeKeys, setActiveKeys] = useState<string[]>([])
   const loadedChunksRef = useRef<Record<string, BuildingChunkData>>({})
@@ -212,14 +194,8 @@ export default function GwangjuCity() {
   const preloadStarted = useRef(false)
 
   useEffect(() => {
-    fetch(MANIFEST_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load Gwangju building manifest: ${response.status}`)
-        }
-        return response.json()
-      })
-      .then((data) => setManifest(data as Manifest))
+    loadBuildingManifest()
+      .then((data) => setManifest(data))
       .catch(console.error)
   }, [])
 
@@ -243,14 +219,8 @@ export default function GwangjuCity() {
           const chunkInfo = manifest.chunks.find((chunk) => chunk.key === key)
           if (!chunkInfo) return Promise.resolve(null)
 
-          return fetch(`${DATA_ROOT}${chunkInfo.file}`)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(`Failed to load Gwangju building chunk ${key}: ${response.status}`)
-              }
-              return response.json()
-            })
-            .then((geoJson) => [key, geoJson as BuildingChunkData] as const)
+          return loadBuildingChunk(chunkInfo)
+            .then((geoJson) => [key, geoJson] as const)
             .catch((error) => {
               console.error(error)
               return null

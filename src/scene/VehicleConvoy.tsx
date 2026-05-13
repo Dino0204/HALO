@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import { loadGwangjuRoads } from '../utils/assetPreload'
 import {
-  GWANGJU_ROADS_URL,
   createGeumnamroPath,
   pathLength,
   pointAtDistance,
@@ -31,14 +31,8 @@ export default function VehicleConvoy() {
   const [roads, setRoads] = useState<RoadFeatureCollection | null>(null)
 
   useEffect(() => {
-    fetch(GWANGJU_ROADS_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load Gwangju roads for vehicles: ${response.status}`)
-        }
-        return response.json()
-      })
-      .then((data) => setRoads(data as RoadFeatureCollection))
+    loadGwangjuRoads()
+      .then((data) => setRoads(data))
       .catch(console.error)
   }, [])
 

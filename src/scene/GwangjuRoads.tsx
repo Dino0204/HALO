@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
 import type { Feature, LineString } from 'geojson'
+import { loadGwangjuRoads } from '../utils/assetPreload'
 import {
   GWANGJU_LANDMARKS,
   cityVisualBbox,
@@ -10,7 +11,6 @@ import {
   type Point2D,
 } from '../utils/gwangjuCityScale'
 
-const ROADS_URL = '/data/gwangju-roads/roads.json'
 const CITY_VISIBLE_START = 0.2857
 const CITY_VISIBLE_END = 0.9286
 const FINAL_MAP_REVEAL_START = 0.9286
@@ -97,14 +97,8 @@ export default function GwangjuRoads() {
   const [roads, setRoads] = useState<RoadCollection | null>(null)
 
   useEffect(() => {
-    fetch(ROADS_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load Gwangju roads: ${response.status}`)
-        }
-        return response.json()
-      })
-      .then((data) => setRoads(data as RoadCollection))
+    loadGwangjuRoads()
+      .then((data) => setRoads(data))
       .catch(console.error)
   }, [])
 

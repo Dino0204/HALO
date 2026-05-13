@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
-import type { Feature, FeatureCollection } from 'geojson'
+import type { Feature } from 'geojson'
+import { loadKoreaGeoJson } from '../utils/assetPreload'
 import { cityVisualPoint } from '../utils/gwangjuCityScale'
 
-const GEO_URL = '/data/provinces-geo-simple.json'
 const CITY_TRANSITION_START = 0.2857
 const FINAL_MAP_REVEAL_START = 0.9286
 
@@ -122,13 +122,7 @@ function GwangjuBoundary() {
   const [feature, setFeature] = useState<Feature | null>(null)
 
   useEffect(() => {
-    fetch(GEO_URL)
-      .then((r) => {
-        if (!r.ok) {
-          throw new Error(`Failed to load Korea map GeoJSON: ${r.status}`)
-        }
-        return r.json() as Promise<FeatureCollection>
-      })
+    loadKoreaGeoJson()
       .then((geoJson) => {
         const gwangju = geoJson.features.find(
           (item) => (item.properties as { name?: string } | null)?.name === '광주광역시'

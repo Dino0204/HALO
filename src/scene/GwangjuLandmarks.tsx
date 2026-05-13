@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text, useScroll } from '@react-three/drei'
 import * as THREE from 'three'
+import { loadGwangjuRoads } from '../utils/assetPreload'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
 import {
-  GWANGJU_ROADS_URL,
   createGeumnamroPath,
   pathLength,
   pointAtDistance,
@@ -101,14 +101,8 @@ function GeumnamroPulse() {
   const [roads, setRoads] = useState<RoadFeatureCollection | null>(null)
 
   useEffect(() => {
-    fetch(GWANGJU_ROADS_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load Gwangju roads for Geumnamro pulse: ${response.status}`)
-        }
-        return response.json()
-      })
-      .then((data) => setRoads(data as RoadFeatureCollection))
+    loadGwangjuRoads()
+      .then((data) => setRoads(data))
       .catch(console.error)
   }, [])
 

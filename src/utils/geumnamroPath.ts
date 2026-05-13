@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import type { FeatureCollection, Feature, LineString } from 'geojson'
 import { cityVisualBbox, type Point2D } from './gwangjuCityScale'
+import { GWANGJU_ROADS_URL } from './assetPreload'
 
-export const GWANGJU_ROADS_URL = '/data/gwangju-roads/roads.json'
+export { GWANGJU_ROADS_URL }
 
 export function toVisualPoint([x, z]: [number, number]): Point2D {
   const [minX, minZ, maxX, maxZ] = cityVisualBbox([x, z, x, z])
