@@ -25,7 +25,6 @@
 | @react-three/postprocessing | 필름 셰이더 후처리                               |
 | three                       | 3D 렌더링                                        |
 | gsap + split-type           | 텍스트 오버레이 애니메이션 (씬 외부 HTML 레이어) |
-| osmtogeojson                | OSM Overpass API → GeoJSON 변환                  |
 | zustand                     | 씬 상태 관리 (현재 씬, 자동재생 등)              |
 
 **역할 분리 원칙**
@@ -34,48 +33,65 @@
 - 텍스트 UI 애니메이션 → GSAP (씬 외부)
 - 이 둘을 혼용하면 스크롤 이벤트 충돌이 발생하므로 반드시 역할을 분리한다
 
-## 디렉토리 구조
+## 디렉토리 구조 (FSD)
+
+Feature-Sliced Design. **배럴 파일(`index.ts`)을 쓰지 않는다** — 모든 임포트는
+`@/<layer>/<slice>/<segment>/<file>` 형태로 실제 파일을 직접 가리킨다.
+`@`는 `src`의 별칭 (`vite.config.ts` + `tsconfig.json` paths).
+
+레이어 의존 방향은 위에서 아래로만: `app → pages → widgets → features → entities → shared`.
+같은 레이어의 슬라이스끼리는 서로 임포트하지 않는다.
 
 ```
 src/
-├── main.jsx               # 진입점
-├── App.jsx                # ScrollControls 최상위 래퍼
-├── scene/
-│   ├── Experience.jsx     # R3F 씬 루트
-│   ├── CameraRig.jsx      # useScroll → 카메라 경로 이동 (useFrame)
-│   ├── CityMesh.jsx       # OSM GeoJSON → InstancedMesh
-│   ├── GwangjuCity.jsx    # 광주 도심 렌더링
-│   ├── GwangjuRoads.jsx   # 도로 렌더링
-│   ├── GwangjuLandmarks.jsx / landmarkPositions.js
-│   ├── KoreaMap.jsx       # Scene 00·01·02·03·09 한국 지도
-│   ├── MapMarkers.jsx     # 지도 마커
-│   ├── GwangjuBlockade.jsx # Scene 09 봉쇄 빗금
-│   ├── Particles.jsx      # 강하 파티클
-│   ├── TearGasParticles.jsx # Scene 04 최루탄
-│   ├── VehicleConvoy.jsx  # Scene 05 차량 행렬
-│   ├── FlashScene.jsx     # Scene 07 발포 플래시
-│   ├── CnuMainBuilding.jsx   # Scene 03·04 전남대
-│   ├── GwangjuMBCBuilding.jsx # Scene 06 GLB
-│   ├── JeonilBuilding.jsx    # Scene 08 GLB
-│   ├── DemocracySquare.jsx   # Scene 10 GLB
-│   ├── ProvincialOffice.jsx  # Scene 11·12
-│   ├── May18Cemetery.jsx     # Scene 13 GLB
-│   └── ScrollSync.jsx
-├── shaders/
-│   ├── FilmEffect.jsx     # postprocessing Effect 래퍼
-│   ├── film.frag.glsl     # 흑백 + grain + vignette
-│   └── film.vert.glsl
-├── ui/
-│   ├── TextOverlay.jsx    # HTML 오버레이 (GSAP)
-│   ├── HUDTimeline.jsx    # 우측 타임라인 HUD
-│   ├── HUDLocation.jsx    # 현재 위치 HUD
-│   ├── AutoPlayButton.jsx # 자동재생 / 배속 / 처음·끝 버튼
-│   └── CustomScrollbar.jsx
-├── store/                 # zustand 상태
-└── utils/
-    ├── osmLoader.js       # Overpass API fetch
-    ├── geoToThree.js      # 위경도 → Three.js 좌표
-    └── cameraPath.js      # CatmullRomCurve3 경로
+├── app/                                  # 진입점 · 전역 스타일
+│   ├── main.tsx
+│   └── index.css
+│
+├── pages/main/ui/
+│   ├── Main.tsx                          # Canvas + ScrollControls + 오버레이 조합
+│   └── Experience.tsx                    # R3F 씬 루트 (모든 씬 위젯 조합)
+│
+├── widgets/                              # 씬 단위 · HUD 블록
+│   ├── hud-timeline/ui/HUDTimeline.tsx
+│   ├── hud-location/ui/HUDLocation.tsx
+│   ├── narration-overlay/ui/TextOverlay.tsx   # GSAP HTML 오버레이
+│   ├── loading-screen/ui/LoadingScreen.tsx
+│   ├── scene-cnu-gate/ui/                # Scene 03·04 전남대 + 최루탄
+│   ├── scene-geumnamro-convoy/ui/        # Scene 05 차량 행렬
+│   ├── scene-mbc-fire/{ui,model}/        # Scene 06 광주MBC (GLB)
+│   ├── scene-mass-shooting/ui/           # Scene 07 발포 플래시
+│   ├── scene-jeonil-building/{ui,model}/ # Scene 08 전일빌딩 (GLB)
+│   ├── scene-blockade/ui/                # Scene 09 봉쇄 빗금
+│   ├── scene-democracy-square/{ui,model}/# Scene 10 민주광장 (GLB)
+│   ├── scene-provincial-office/{ui,model}/# Scene 11·12 전남도청
+│   └── scene-cemetery/{ui,model}/        # Scene 13 국립5.18민주묘지 (GLB)
+│
+├── features/
+│   ├── camera-descent/ui/CameraRig.tsx   # useScroll → 카메라 경로 (useFrame)
+│   ├── auto-play/{model/playStore.ts, ui/AutoPlayButton.tsx}
+│   └── scroll-progress/ui/CustomScrollbar.tsx
+│
+├── entities/
+│   ├── scroll/
+│   │   ├── model/{scrollStore.ts, scrollRange.ts}
+│   │   └── ui/{ScrollSync.tsx, ScrollRange.tsx}
+│   ├── scene/model/sceneStore.ts         # 현재 씬 인덱스
+│   ├── timeline/model/hudData.ts         # SCENE_HUD_DATA · DATE_PROGRESS
+│   ├── korea-map/ui/{KoreaMap.tsx, MapMarkers.tsx}
+│   └── gwangju/
+│       ├── model/{landmarks.ts, geumnamroPath.ts}
+│       └── ui/{GwangjuCity.tsx, GwangjuRoads.tsx, GwangjuLandmarks.tsx}
+│
+└── shared/
+    ├── config/assets.ts                  # GeoJSON · GLB URL 상수
+    ├── api/                              # loadJson(캐시) · koreaGeo · gwangjuRoads
+    │                                     # · gwangjuBuildings · preloadSceneAssets
+    ├── lib/
+    │   ├── seededRandom.ts
+    │   ├── geo/{types.ts, cityProjection.ts}   # 위경도 → 지도/도심 좌표 변환
+    │   └── three/cloneAsGrayscale.ts
+    └── ui/film-effect/{FilmEffect.tsx, film.frag.glsl}
 data/
 └── timeline.json          # 큐레이션된 역사 데이터
 public/
@@ -86,6 +102,12 @@ public/
     ├── gwangju-fountain.glb
     └── may18-cemetery.glb
 ```
+
+**슬라이스 배치 기준**
+
+- 여러 씬이 공유하는 도메인 렌더링(한국 지도, 광주 도심·도로·랜드마크) → `entities`
+- 특정 씬 하나에만 속하는 연출 → `widgets/scene-*` (씬 상수는 그 슬라이스의 `model/constants.ts`)
+- 좌표 변환·난수·머티리얼 유틸처럼 도메인 지식이 없는 코드 → `shared/lib`
 
 ## 씬별 상세 (14개)
 
@@ -131,10 +153,10 @@ Scene 10~12  광주 도심 (1인칭)
 Scene 13     천천히 상승 → 묘지 전경
 ```
 
-카메라 경로: `CatmullRomCurve3` (`utils/cameraPath.js`)  
+카메라 경로: `features/camera-descent/ui/CameraRig.tsx` (스크롤 구간별 보간)  
 마우스 인터랙션 (Scene 03 이후): yaw ±8°, pitch ±4° (GSAP quickTo)
 
-## 필름 셰이더 (film.frag.glsl)
+## 필름 셰이더 (`shared/ui/film-effect/film.frag.glsl`)
 
 `uProgress` (= `scroll.offset`) 기반 자동 전환:
 
