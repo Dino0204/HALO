@@ -24,8 +24,7 @@
 | @react-three/drei           | ScrollControls, useScroll, Html 헬퍼             |
 | @react-three/postprocessing | 필름 셰이더 후처리                               |
 | three                       | 3D 렌더링                                        |
-| gsap + split-type           | 텍스트 오버레이 애니메이션 (씬 외부 HTML 레이어) |
-| osmtogeojson                | OSM Overpass API → GeoJSON 변환                  |
+| gsap                        | 텍스트 오버레이 애니메이션 (씬 외부 HTML 레이어) |
 | zustand                     | 씬 상태 관리 (현재 씬, 자동재생 등)              |
 
 **역할 분리 원칙**
@@ -43,14 +42,12 @@ src/
 ├── scene/
 │   ├── Experience.jsx     # R3F 씬 루트
 │   ├── CameraRig.jsx      # useScroll → 카메라 경로 이동 (useFrame)
-│   ├── CityMesh.jsx       # OSM GeoJSON → InstancedMesh
 │   ├── GwangjuCity.jsx    # 광주 도심 렌더링
 │   ├── GwangjuRoads.jsx   # 도로 렌더링
 │   ├── GwangjuLandmarks.jsx / landmarkPositions.js
 │   ├── KoreaMap.jsx       # Scene 00·01·02·03·09 한국 지도
 │   ├── MapMarkers.jsx     # 지도 마커
 │   ├── GwangjuBlockade.jsx # Scene 09 봉쇄 빗금
-│   ├── Particles.jsx      # 강하 파티클
 │   ├── TearGasParticles.jsx # Scene 04 최루탄
 │   ├── VehicleConvoy.jsx  # Scene 05 차량 행렬
 │   ├── FlashScene.jsx     # Scene 07 발포 플래시
@@ -73,9 +70,10 @@ src/
 │   └── CustomScrollbar.jsx
 ├── store/                 # zustand 상태
 └── utils/
-    ├── osmLoader.js       # Overpass API fetch
-    ├── geoToThree.js      # 위경도 → Three.js 좌표
-    └── cameraPath.js      # CatmullRomCurve3 경로
+    ├── assetPreload.ts    # 정적 자산 fetch + URL 단위 캐시
+    ├── gwangjuCityScale.ts # 위경도 → 지도/도시 좌표 (좌표계 SSOT)
+    ├── geumnamroPath.ts   # 금남로 경로 좌표
+    └── grayscaleModel.ts  # GLB 흑백 머티리얼 클론
 data/
 └── timeline.json          # 큐레이션된 역사 데이터
 public/
@@ -131,7 +129,7 @@ Scene 10~12  광주 도심 (1인칭)
 Scene 13     천천히 상승 → 묘지 전경
 ```
 
-카메라 경로: `CatmullRomCurve3` (`utils/cameraPath.js`)  
+카메라 경로: 키프레임 테이블 lerp + `MathUtils.damp` (`scene/CameraRig.tsx`)  
 마우스 인터랙션 (Scene 03 이후): yaw ±8°, pitch ±4° (GSAP quickTo)
 
 ## 필름 셰이더 (film.frag.glsl)

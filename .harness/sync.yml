@@ -1,0 +1,51 @@
+# themoment-ai-harness-sync 동기화 설정
+# 문서: https://github.com/themoment-team/themoment-ai-harness-sync
+#
+# 이 프로젝트: React 19 + Vite + TypeScript + Tailwind v4 + three.js (R3F) SPA
+# 패키지 매니저 bun / 린터 eslint + prettier / 타입체크 tsc
+# 백엔드·DB·Docker·Next.js 없음
+
+groups:
+  - claude
+
+overrides:
+  # ── 스택에 없는 스킬 제외 ────────────────────────────────
+  # Spring / Kotlin / Java
+  claude/skills/java-spring-arch: false
+  claude/skills/kotlin-spring-arch: false
+  claude/skills/kotest-guide: false
+  claude/skills/the-sdk: false
+  # 백엔드 · 인프라
+  claude/skills/api-design: false
+  claude/skills/database-schema: false
+  claude/skills/migration-guide: false
+  claude/skills/docker: false
+  claude/skills/security-checklist: false
+  # Next.js · FSD · shadcn · TanStack (Vite SPA라 해당 없음)
+  claude/skills/nextjs-fsd-architecture: false
+  claude/skills/nextjs-turborepo-fsd: false
+  claude/skills/nextjs-package-boundaries: false
+  claude/skills/tailwind-shadcn: false
+  claude/skills/tanstack-query-zod: false
+  # 테스트 러너 미도입 — 도입 시 true
+  claude/skills/test: false
+
+  # ── 스택에 없는 에이전트 제외 ─────────────────────────────
+  claude/agents/kotlin-convention-validator: false
+  claude/agents/kotlin-test-fixer: false
+  claude/agents/frontend-convention-validator: false # Next.js/FSD/shadcn/TanStack 전용
+  claude/agents/contradiction-finder: false # .kt 소스 스캔 기반
+  claude/agents/doc-polisher: false # .kt 코드 스니펫 갱신 기반
+
+  # ── 훅 (opt-in) ──────────────────────────────────────
+  claude/hooks/dispatcher: true
+  claude/settings: true
+  claude/hooks/secret-guard: true
+  claude/hooks/command-guard: true
+  claude/hooks/eslint: true # eslint.config.js 존재
+  claude/hooks/prettier: true # .prettierrc 존재
+  claude/hooks/ts-check: true # tsconfig.json 존재
+
+# base_branch 생략 = 기본 브랜치(main). 현재 develop과 main이 동일하고 PR도 main으로 간다.
+# develop이 main보다 앞서기 시작하면 `base_branch: develop` 한 줄 추가할 것.
+language: ko
