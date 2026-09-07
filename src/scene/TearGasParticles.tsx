@@ -3,19 +3,12 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import type { Points } from 'three'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import { seededRandom } from '../utils/seededRandom'
 
 const COUNT = 800
 const GEUMNAMRO_CENTER = {
   x: (GWANGJU_LANDMARKS.geumnamroPark.x + GWANGJU_LANDMARKS.jeonilBuilding.x) / 2,
   z: (GWANGJU_LANDMARKS.geumnamroPark.z + GWANGJU_LANDMARKS.jeonilBuilding.z) / 2,
-}
-
-function seededRandom(seed: number) {
-  let value = seed
-  return function rng() {
-    value = (value * 1664525 + 1013904223) >>> 0
-    return value / 0x100000000
-  }
 }
 
 export default function TearGasParticles() {

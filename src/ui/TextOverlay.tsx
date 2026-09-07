@@ -312,7 +312,10 @@ export default function TextOverlay() {
                 { label: '부상', value: '3,028명' },
                 { label: '구속·구금', value: '1,589명' },
               ].map(({ label, value }) => (
-                <div key={label} className="border border-[#555] bg-black/80 p-3 text-center sm:p-4">
+                <div
+                  key={label}
+                  className="border border-[#555] bg-black/80 p-3 text-center sm:p-4"
+                >
                   <div className="mb-1.5 font-mono text-[0.65rem] opacity-60 sm:mb-2 sm:text-xs">
                     {label}
                   </div>

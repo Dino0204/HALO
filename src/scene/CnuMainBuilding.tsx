@@ -1,36 +1,20 @@
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { useScroll, useGLTF } from '@react-three/drei'
-import type { Group } from 'three'
+import { useGLTF } from '@react-three/drei'
 import { GWANGJU_LANDMARKS } from '../utils/gwangjuCityScale'
+import ScrollRange from './ScrollRange'
 
 const SCROLL_START = 0.2857
 const SCROLL_END = 0.5
-const CNU_GATE_MODEL_SCALE = 0.035
-const CNU_GATE_MODEL_Y_OFFSET = -0.1
+const MODEL_URL = '/models/cnu-main-building.glb'
+const MODEL_SCALE = 0.035
+const MODEL_Y_OFFSET = -0.1
 
 export default function CnuMainBuilding() {
-  const groupRef = useRef<Group>(null!)
-  const scroll = useScroll()
-  const { scene } = useGLTF('/models/cnu-main-building.glb')
-
+  const { scene } = useGLTF(MODEL_URL)
   const { x, z } = GWANGJU_LANDMARKS.cnuGate
 
-  useFrame(() => {
-    if (!groupRef.current) return
-    const t = scroll.offset
-    groupRef.current.visible = t >= SCROLL_START && t < SCROLL_END
-  })
-
   return (
-    <group ref={groupRef} visible={false}>
-      <primitive
-        object={scene}
-        position={[x, CNU_GATE_MODEL_Y_OFFSET, z - 3]}
-        scale={CNU_GATE_MODEL_SCALE}
-      />
-    </group>
+    <ScrollRange from={SCROLL_START} to={SCROLL_END}>
+      <primitive object={scene} position={[x, MODEL_Y_OFFSET, z - 3]} scale={MODEL_SCALE} />
+    </ScrollRange>
   )
 }
-
-useGLTF.preload('/models/cnu-main-building.glb')
