@@ -13,5 +13,7 @@ export function loadJson<T>(url: string): Promise<T> {
   })
 
   jsonCache.set(url, request)
+  // 실패한 promise가 남으면 재시도도 같은 에러를 받는다.
+  request.catch(() => jsonCache.delete(url))
   return request
 }

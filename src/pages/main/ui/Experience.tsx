@@ -23,17 +23,17 @@ export default function Experience() {
   return (
     <>
       <CameraRig />
-      <KoreaMap />
-      <MapMarkers />
-      <GwangjuCity />
-      <GwangjuRoads />
-      <GwangjuLandmarks />
-      <TearGasParticles />
-      <VehicleConvoy />
-      <FlashScene />
-      <GwangjuBlockade />
-      <ProvincialOffice />
       <Suspense fallback={null}>
+        <KoreaMap />
+        <MapMarkers />
+        <GwangjuCity />
+        <GwangjuRoads />
+        <GwangjuLandmarks />
+        <TearGasParticles />
+        <VehicleConvoy />
+        <FlashScene />
+        <GwangjuBlockade />
+        <ProvincialOffice />
         <CnuMainBuilding />
         <GwangjuMBCBuilding />
         <JeonilBuilding />

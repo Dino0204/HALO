@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -6,7 +6,6 @@ import {
   loadBuildingChunk,
   loadBuildingManifest,
   type BuildingChunkData,
-  type BuildingManifest,
   type BuildingManifestChunk,
 } from '@/shared/api/gwangjuBuildings'
 import {
@@ -184,7 +183,7 @@ export default function GwangjuCity() {
   const groupRef = useRef<THREE.Group>(null!)
   const scroll = useScroll()
   const { camera } = useThree()
-  const [manifest, setManifest] = useState<BuildingManifest | null>(null)
+  const manifest = use(loadBuildingManifest())
   const [loadedChunks, setLoadedChunks] = useState<Record<string, BuildingChunkData>>({})
   const [activeKeys, setActiveKeys] = useState<string[]>([])
   const loadedChunksRef = useRef<Record<string, BuildingChunkData>>({})
@@ -193,18 +192,12 @@ export default function GwangjuCity() {
   const preloadStarted = useRef(false)
 
   useEffect(() => {
-    loadBuildingManifest()
-      .then((data) => setManifest(data))
-      .catch(console.error)
-  }, [])
-
-  useEffect(() => {
     loadedChunksRef.current = loadedChunks
   }, [loadedChunks])
 
   const loadChunkKeys = useCallback(
     (keys: string[]) => {
-      if (!manifest || keys.length === 0) return
+      if (keys.length === 0) return
 
       const missing = keys.filter((key) => {
         return !loadedChunksRef.current[key] && !loadingKeys.current.has(key)
@@ -250,16 +243,14 @@ export default function GwangjuCity() {
     if (!groupRef.current) return
 
     const t = scroll.offset
-    if (manifest && !preloadStarted.current && t >= CITY_PRELOAD_START) {
+    if (!preloadStarted.current && t >= CITY_PRELOAD_START) {
       preloadStarted.current = true
       loadChunkKeys(manifest.chunks.map((chunk) => chunk.key))
     }
 
     const visible = isCitySceneVisible(t)
     groupRef.current.visible = visible
-    if (!visible || !manifest) {
-      return
-    }
+    if (!visible) return
 
     const nextActive =
       t >= FINAL_MAP_REVEAL_START

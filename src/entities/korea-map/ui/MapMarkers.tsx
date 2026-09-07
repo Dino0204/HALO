@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { use, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -119,21 +119,15 @@ function GwangjuBoundary() {
   const scroll = useScroll()
   const mapRef = useRef<THREE.Group>(null!)
   const cityRef = useRef<THREE.Group>(null!)
-  const [feature, setFeature] = useState<Feature | null>(null)
+  const geoJson = use(loadKoreaGeoJson())
 
-  useEffect(() => {
-    loadKoreaGeoJson()
-      .then((geoJson) => {
-        const gwangju = geoJson.features.find(
-          (item) => (item.properties as { name?: string } | null)?.name === '광주광역시'
-        )
-        if (!gwangju) {
-          throw new Error('Gwangju boundary was not found in Korea map GeoJSON')
-        }
-        setFeature(gwangju)
-      })
-      .catch(console.error)
-  }, [])
+  const feature = useMemo<Feature | null>(() => {
+    return (
+      geoJson.features.find(
+        (item) => (item.properties as { name?: string } | null)?.name === '광주광역시'
+      ) ?? null
+    )
+  }, [geoJson])
 
   const mapGeometries = useMemo(() => {
     if (!feature) return []

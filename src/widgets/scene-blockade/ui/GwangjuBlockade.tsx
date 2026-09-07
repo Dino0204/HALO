@@ -1,8 +1,7 @@
-import { useRef, useMemo, useState, useEffect } from 'react'
+import { use, useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
-import type { FeatureCollection } from 'geojson'
 import { loadKoreaGeoJson } from '@/shared/api/koreaGeo'
 
 const stripeVertexShader = `
@@ -25,18 +24,11 @@ const stripeFragmentShader = `
 export default function GwangjuBlockade() {
   const meshRef = useRef<THREE.Mesh>(null!)
   const scroll = useScroll()
-  const [geoJson, setGeoJson] = useState<FeatureCollection | null>(null)
-
-  useEffect(() => {
-    loadKoreaGeoJson()
-      .then((data) => setGeoJson(data))
-      .catch(console.error)
-  }, [])
+  const geoJson = use(loadKoreaGeoJson())
 
   const materialRef = useRef<THREE.ShaderMaterial>(null!)
 
   const geometry = useMemo(() => {
-    if (!geoJson) return null
     const gwangju = geoJson.features.find(
       (f) => (f.properties as { code?: string } | null)?.code === '24'
     )

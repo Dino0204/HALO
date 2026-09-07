@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { use, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -41,19 +41,12 @@ function buildShapesFromGeoJson(geoJson: FeatureCollection): THREE.Shape[] {
 }
 
 export default function KoreaMap() {
-  const [geoJson, setGeoJson] = useState<FeatureCollection | null>(null)
+  const geoJson = use(loadKoreaGeoJson())
   const meshRef = useRef<THREE.Mesh>(null!)
   const groupRef = useRef<THREE.Group>(null!)
   const scroll = useScroll()
 
-  useEffect(() => {
-    loadKoreaGeoJson()
-      .then((data) => setGeoJson(data))
-      .catch(console.error)
-  }, [])
-
   const geometry = useMemo(() => {
-    if (!geoJson) return null
     const shapes = buildShapesFromGeoJson(geoJson)
     const geo = new THREE.ShapeGeometry(shapes)
     geo.rotateX(-Math.PI / 2)
@@ -65,8 +58,6 @@ export default function KoreaMap() {
     const t = scroll.offset
     groupRef.current.visible = t < CITY_TRANSITION_START || (t >= 0.6429 && t < 0.7143)
   })
-
-  if (!geometry) return null
 
   return (
     <group ref={groupRef}>

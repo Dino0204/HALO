@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { use, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -91,17 +91,9 @@ export default function GwangjuRoads() {
   const groupRef = useRef<THREE.Group>(null!)
   const geumnamroRef = useRef<THREE.LineSegments>(null!)
   const scroll = useScroll()
-  const [roads, setRoads] = useState<RoadCollection | null>(null)
+  const roads: RoadCollection = use(loadGwangjuRoads())
 
-  useEffect(() => {
-    loadGwangjuRoads()
-      .then((data) => setRoads(data))
-      .catch(console.error)
-  }, [])
-
-  const geometries = useMemo<Record<RoadClass, THREE.BufferGeometry> | null>(() => {
-    if (!roads) return null
-
+  const geometries = useMemo<Record<RoadClass, THREE.BufferGeometry>>(() => {
     const groups: Record<RoadClass, RoadFeature[]> = {
       major: [],
       street: [],
@@ -131,7 +123,6 @@ export default function GwangjuRoads() {
 
   useEffect(() => {
     return () => {
-      if (!geometries) return
       Object.values(geometries).forEach((geometry) => geometry.dispose())
     }
   }, [geometries])
@@ -144,10 +135,6 @@ export default function GwangjuRoads() {
       geumnamroRef.current.visible = t < OFFICE_FOCUS_START
     }
   })
-
-  if (!geometries) {
-    return <group ref={groupRef} visible={false} />
-  }
 
   return (
     <group ref={groupRef} visible={false}>

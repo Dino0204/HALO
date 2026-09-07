@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { use, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import * as THREE from 'three'
@@ -28,18 +28,9 @@ interface Vehicle {
 export default function VehicleConvoy() {
   const groupRef = useRef<THREE.Group>(null!)
   const scroll = useScroll()
-  const [roads, setRoads] = useState<RoadFeatureCollection | null>(null)
+  const roads: RoadFeatureCollection = use(loadGwangjuRoads())
 
-  useEffect(() => {
-    loadGwangjuRoads()
-      .then((data) => setRoads(data))
-      .catch(console.error)
-  }, [])
-
-  const roadPath = useMemo(() => {
-    if (!roads) return []
-    return createGeumnamroPath(roads)
-  }, [roads])
+  const roadPath = useMemo(() => createGeumnamroPath(roads), [roads])
 
   const roadDistance = useMemo(() => pathLength(roadPath), [roadPath])
 
